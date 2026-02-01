@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "739951567773",
+    "project_id": "budget-f0086",
+    "storage_bucket": "budget-f0086.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:739951567773:android:d7d3d81d1ea4b7d7e6c574",
+        "android_client_info": {
+          "package_name": "com.bungalow.budget"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyC6pm2I2FZiE4zKRP14DWNRljSBcXv7O7Y"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
