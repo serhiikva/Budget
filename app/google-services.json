@@ -1,6 +1,7 @@
 {
   "project_info": {
     "project_number": "739951567773",
+    "firebase_url": "https://budget-f0086-default-rtdb.europe-west1.firebasedatabase.app",
     "project_id": "budget-f0086",
     "storage_bucket": "budget-f0086.firebasestorage.app"
   },
@@ -12,7 +13,20 @@
           "package_name": "com.bungalow.budget"
         }
       },
-      "oauth_client": [],
+      "oauth_client": [
+        {
+          "client_id": "739951567773-fe64n0mhd63kulqti6bpg9ncvj2khks1.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.bungalow.budget",
+            "certificate_hash": "cfae67933dedd9b73695dddde2271b69ac228a52"
+          }
+        },
+        {
+          "client_id": "739951567773-nl33oghr8q5ojd59j1ouofbr4jke4n7d.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
       "api_key": [
         {
           "current_key": "AIzaSyC6pm2I2FZiE4zKRP14DWNRljSBcXv7O7Y"
@@ -20,7 +34,12 @@
       ],
       "services": {
         "appinvite_service": {
-          "other_platform_oauth_client": []
+          "other_platform_oauth_client": [
+            {
+              "client_id": "739951567773-nl33oghr8q5ojd59j1ouofbr4jke4n7d.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
         }
       }
     }

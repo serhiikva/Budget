@@ -1,3 +1,20 @@
 <resources>
     <string name="app_name">Budget</string>
+
+    <string name="general.apply">Apply</string>
+    <string name="general.cancel">Cancel</string>
+    <string name="general.amount">Amount</string>
+    <string name="general.name">Name</string>
+    <string name="general.note">Note</string>
+
+    <string name="home.start_budget">Start Budget</string>
+    <string name="home.budget_summary">Budget Summary</string>
+
+    <string name="start_budget.add_category">Add Category</string>
+    <string name="start_budget.add_member">Add Member</string>
+
+    <string name="dialog.add_category.title">Add Category</string>
+
+    <string name="dialog.add_payment.title">Add Payment</string>
+    <string name="dialog.add_payment.category">Category: %s</string>
 </resources>
