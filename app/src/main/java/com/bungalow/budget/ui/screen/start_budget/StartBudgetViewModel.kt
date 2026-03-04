@@ -52,7 +52,6 @@ class StartBudgetViewModel @Inject constructor(
                 observeBudgetByIdUseCase.invoke(budgetId)
             }.collect {
                 _budget.value = it ?: Budget.empty()
-                Timber.d("check task _budget: ${_budget.value}")
             }
         }
     }
