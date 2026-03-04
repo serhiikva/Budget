@@ -12,6 +12,9 @@
 
     <string name="start_budget.add_category">Add Category</string>
     <string name="start_budget.add_member">Add Member</string>
+    <string name="start_budget.finish">Finish Budget And Start New One</string>
+    <string name="start_budget.finish_budget_dialog.title">Finish Budget</string>
+    <string name="start_budget.finish_budget_dialog.description">Are you sure you want to finish the budget?</string>
 
     <string name="dialog.add_category.title">Add Category</string>
 

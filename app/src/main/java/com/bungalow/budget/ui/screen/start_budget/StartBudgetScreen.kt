@@ -1,7 +1,6 @@
 package com.bungalow.budget.ui.screen.start_budget
 
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -10,8 +9,10 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -41,11 +42,13 @@ fun StartBudgetScreen(
     val budget by viewModel.budget.collectAsStateWithLifecycle()
     val showAddCategoryDialog by viewModel.showAddCategoryDialog.collectAsStateWithLifecycle()
     val showAddMemberDialog by viewModel.showAddMemberDialog.collectAsStateWithLifecycle()
+    val showConfirmFinishBudgetDialog by viewModel.showConfirmFinishBudgetDialog.collectAsStateWithLifecycle()
 
     Content(
         budget = budget,
         onAddCategoryClick = viewModel::onAddCategoryClick,
-        onAddMemberClick = viewModel::onAddMemberClick
+        onAddMemberClick = viewModel::onAddMemberClick,
+        onFinishBudgetClick = viewModel::onFinishBudgetClick,
     )
 
     LaunchedEffect(showAddCategoryDialog) {
@@ -71,6 +74,32 @@ fun StartBudgetScreen(
             onConfirm = viewModel::onAddMemberConfirmed
         )
     }
+
+    if (showConfirmFinishBudgetDialog) {
+        AlertDialog(
+            onDismissRequest = viewModel::onFinishBudgetDismissed,
+            title = {
+                Text(text = stringResource(R.string.start_budget_finish_budget_dialog_title))
+            },
+            text = {
+                Text(text = stringResource(R.string.start_budget_finish_budget_dialog_description))
+            },
+            confirmButton = {
+                TextButton(
+                    onClick = viewModel::onFinishBudgetConfirmed
+                ) {
+                    Text(text = stringResource(R.string.general_apply))
+                }
+            },
+            dismissButton = {
+                TextButton(
+                    onClick = viewModel::onFinishBudgetDismissed
+                ) {
+                    Text(text = stringResource(R.string.general_cancel))
+                }
+            }
+        )
+    }
 }
 
 @Composable
@@ -78,6 +107,7 @@ private fun Content(
     budget: Budget,
     onAddCategoryClick: () -> Unit,
     onAddMemberClick: () -> Unit,
+    onFinishBudgetClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
     Column(
@@ -108,6 +138,14 @@ private fun Content(
                     .padding(horizontal = 16.dp, vertical = 8.dp)
             ) {
                 Text(text = stringResource(R.string.start_budget_add_category))
+            }
+            Button(
+                onClick = onFinishBudgetClick,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 16.dp, vertical = 8.dp)
+            ) {
+                Text(text = stringResource(R.string.start_budget_finish))
             }
         }
     }
@@ -144,5 +182,6 @@ private fun StartBudgetScreenPreview() {
         budget = getMockedBudget(),
         onAddCategoryClick = {},
         onAddMemberClick = {},
+        onFinishBudgetClick = {},
     )
 }
