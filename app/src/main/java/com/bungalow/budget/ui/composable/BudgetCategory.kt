@@ -2,6 +2,7 @@ package com.bungalow.budget.ui.composable
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -35,6 +36,7 @@ import androidx.compose.ui.unit.dp
 import com.bungalow.budget.ui.theme.ProgressDanger
 import com.bungalow.budget.ui.theme.ProgressSafe
 import com.bungalow.budget.ui.theme.ProgressWarning
+import com.bungalow.budget.utils.getSpentAmount
 import com.bungalow.budget.utils.toSentenceCase
 import com.investigate.domain.model.BudgetCategory
 import java.util.concurrent.TimeUnit
@@ -43,9 +45,10 @@ import java.util.concurrent.TimeUnit
 fun BudgetCategory(
     category: BudgetCategory,
     onAddCategoryPaymentClick: (BudgetCategory) -> Unit,
+    onCategoryClick: (BudgetCategory) -> Unit,
     modifier: Modifier = Modifier
 ) {
-    val budgetSpentAmount = category.spentAmount
+    val budgetSpentAmount = category.getSpentAmount()
     val budgetAmount = category.budgetAmount
     val progress = (budgetSpentAmount.toFloat() / budgetAmount).coerceIn(0f, 1f)
 
@@ -67,7 +70,9 @@ fun BudgetCategory(
             Text(
                 text = category.name.toSentenceCase(),
                 style = MaterialTheme.typography.titleMedium,
-                color = MaterialTheme.colorScheme.onSurface
+                color = MaterialTheme.colorScheme.onSurface,
+                modifier = Modifier
+                    .clickable(onClick = { onCategoryClick(category) })
             )
 
             Spacer(modifier = Modifier.height(8.dp))
@@ -96,7 +101,7 @@ fun BudgetCategory(
                         contentAlignment = Alignment.Center
                     ) {
                         Text(
-                            text = "${category.spentAmount} / ${category.budgetAmount}",
+                            text = "${category.getSpentAmount()} / ${category.budgetAmount}",
                             style = MaterialTheme.typography.bodySmall,
                             color = MaterialTheme.colorScheme.onSurface
                         )

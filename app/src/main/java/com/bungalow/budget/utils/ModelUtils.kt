@@ -7,39 +7,9 @@ import com.investigate.domain.model.Budget
 import com.investigate.domain.model.BudgetCategory
 import com.investigate.domain.model.CategoryPayment
 
-fun getEmptyBudgetCategory(): BudgetCategory {
-    return BudgetCategory(
-        id = "",
-        name = "",
-        payments = emptyList(),
-        budgetAmount = 0,
-        spentAmount = 0
-    )
-}
-
-fun BudgetCategory.isEmpty(): Boolean {
-    return id.isEmpty()
-}
-
 fun getMockedBudget(): Budget {
-    val categories = listOf(
-        BudgetCategory(
-            id = "1",
-            "Food",
-            5000,
-            1000,
-            listOf(CategoryPayment("1", "3",1000, "Payment note", System.currentTimeMillis()))
-        ),
-        BudgetCategory(
-            id = "2",
-            "Food",
-            5000,
-            1000,
-            listOf(CategoryPayment("2", "4",1000, "Payment note", System.currentTimeMillis()))
-        )
-    )
     return Budget(
-        categories = categories,
+        categories = getMockedCategories(),
         id = 44,
         startDateMillis = System.currentTimeMillis() - (60 * 60 * 1000),
         endDateMillis = 0L,
@@ -50,12 +20,33 @@ fun getMockedBudget(): Budget {
     )
 }
 
+fun getMockedCategories(): List<BudgetCategory> {
+    return listOf(
+        BudgetCategory(
+            id = "1",
+            "Food",
+            5000,
+            listOf(CategoryPayment("1", "3",1000, "Payment note", System.currentTimeMillis()))
+        ),
+        BudgetCategory(
+            id = "2",
+            "Food",
+            5000,
+            listOf(CategoryPayment("2", "4",1000, "Payment note", System.currentTimeMillis()))
+        )
+    )
+}
+
 fun Budget.getAmount(): Int {
     return this.categories.sumOf { it.budgetAmount }
 }
 
+fun BudgetCategory.getSpentAmount(): Int {
+    return this.payments.sumOf { it.amount }
+}
+
 fun Budget.getSpentAmount(): Int {
-    return this.categories.sumOf { it.spentAmount }
+    return this.categories.sumOf { it.getSpentAmount() }
 }
 
 fun Budget.toModelUi(): BudgetUi {
@@ -75,7 +66,7 @@ fun BudgetCategory.toModelUi(): BudgetCategoryUi {
         id = this.id,
         name = this.name.toSentenceCase(),
         budgetAmount = this.budgetAmount,
-        spentAmount = this.spentAmount,
+        spentAmount = this.getSpentAmount(),
         payments = this.payments.map { it.toModelUi() }
     )
 }

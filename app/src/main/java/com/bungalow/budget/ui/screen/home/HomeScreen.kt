@@ -40,7 +40,8 @@ fun HomeScreen(
     viewModel: HomeViewModel = hiltViewModel(),
     addPaymentViewModel: AddPaymentViewModel = hiltViewModel(),
     onStartBudgetClick: () -> Unit,
-    onBudgetSettingsClick: (Int) -> Unit
+    onBudgetSettingsClick: (Int) -> Unit,
+    onCategoryClick: (Int, String) -> Unit,
 ) {
     val budget by viewModel.budget.collectAsStateWithLifecycle()
     val categoryToAddPayment by viewModel.categoryToAddPayment.collectAsStateWithLifecycle(null)
@@ -49,7 +50,8 @@ fun HomeScreen(
         budget = budget,
         onStartBudgetClick = onStartBudgetClick,
         onAddCategoryPaymentClick = viewModel::onAddCategoryPaymentClick,
-        onBudgetSettingsClick = onBudgetSettingsClick
+        onBudgetSettingsClick = onBudgetSettingsClick,
+        onCategoryClick = onCategoryClick
     )
 
     LaunchedEffect(categoryToAddPayment) {
@@ -73,13 +75,15 @@ private fun Content(
     budget: Budget,
     onStartBudgetClick: () -> Unit,
     onAddCategoryPaymentClick: (BudgetCategory) -> Unit,
-    onBudgetSettingsClick: (Int) -> Unit
+    onBudgetSettingsClick: (Int) -> Unit,
+    onCategoryClick: (Int, String) -> Unit
 ) {
     if (budget.id != 0) {
         BudgetDetails(
             budget = budget,
             onAddCategoryPaymentClick = onAddCategoryPaymentClick,
-            onBudgetSettingsClick = onBudgetSettingsClick
+            onBudgetSettingsClick = onBudgetSettingsClick,
+            onCategoryClick = onCategoryClick
         )
     } else {
         CreateBudget(
@@ -92,7 +96,8 @@ private fun Content(
 private fun BudgetDetails(
     budget: Budget,
     onAddCategoryPaymentClick: (BudgetCategory) -> Unit,
-    onBudgetSettingsClick: (Int) -> Unit
+    onBudgetSettingsClick: (Int) -> Unit,
+    onCategoryClick: (Int, String) -> Unit
 ) {
     Column(
         modifier = Modifier.fillMaxSize()
@@ -105,8 +110,10 @@ private fun BudgetDetails(
             onBudgetSettingsClick = { onBudgetSettingsClick(it.id) }
         )
         CategoryList(
+            budgetId = budget.id,
             categoryList = budget.categories,
             onAddCategoryPaymentClick = onAddCategoryPaymentClick,
+            onCategoryClick = onCategoryClick
         )
     }
 }
@@ -156,8 +163,10 @@ private fun Header(
 
 @Composable
 private fun CategoryList(
+    budgetId: Int,
     categoryList: List<BudgetCategory>,
     onAddCategoryPaymentClick: (BudgetCategory) -> Unit,
+    onCategoryClick: (Int, String) -> Unit,
     modifier: Modifier = Modifier
 ) {
     LazyColumn (
@@ -169,7 +178,8 @@ private fun CategoryList(
         items(categoryList) {
             com.bungalow.budget.ui.composable.BudgetCategory(
                 category = it,
-                onAddCategoryPaymentClick = onAddCategoryPaymentClick
+                onAddCategoryPaymentClick = onAddCategoryPaymentClick,
+                onCategoryClick = { category -> onCategoryClick(budgetId, category.id) }
             )
         }
     }
@@ -182,6 +192,7 @@ private fun HomeScreenPreview() {
         budget = getMockedBudget(),
         onStartBudgetClick = {},
         onAddCategoryPaymentClick = {},
-        onBudgetSettingsClick = {}
+        onBudgetSettingsClick = {},
+        onCategoryClick = {_,_ ->}
     )
 }

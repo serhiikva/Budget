@@ -8,6 +8,5 @@ data class BudgetCategory(
     val id: String = Uuid.random().toString(),
     val name: String,
     val budgetAmount: Int,
-    val spentAmount: Int,
     val payments: List<CategoryPayment>
 )

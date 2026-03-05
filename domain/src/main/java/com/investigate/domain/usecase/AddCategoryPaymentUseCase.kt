@@ -30,7 +30,6 @@ class AddCategoryPaymentUseCase @Inject constructor(
                 categoryFound = true
 
                 category.copy(
-                    spentAmount = category.spentAmount + payment.amount,
                     payments = category.payments + payment
                 )
             } else {

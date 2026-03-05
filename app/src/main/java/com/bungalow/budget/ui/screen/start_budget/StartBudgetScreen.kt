@@ -165,7 +165,8 @@ private fun Categories(
         items(categories) {
             com.bungalow.budget.ui.composable.BudgetCategory(
                 category = it,
-                onAddCategoryPaymentClick = {}
+                onAddCategoryPaymentClick = {},
+                onCategoryClick = {}
             )
         }
     }

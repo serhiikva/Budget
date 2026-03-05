@@ -30,7 +30,6 @@ fun BudgetCategory.toEntity(): BudgetCategoryEntity {
         id = this.id,
         name = this.name,
         budgetAmount = this.budgetAmount,
-        spentAmount = this.spentAmount,
         payments = this.payments.map { it.toEntity() }
     )
 }
@@ -63,7 +62,6 @@ fun BudgetCategoryEntity.toModel(): BudgetCategory {
         id = this.id,
         name = this.name,
         budgetAmount = this.budgetAmount,
-        spentAmount = this.spentAmount,
         payments = this.payments.map { it.toModel() }
     )
 }
@@ -96,7 +94,6 @@ fun BudgetCategory.toDto(): BudgetCategoryDto {
         id = this.id,
         name = this.name,
         budgetAmount = this.budgetAmount,
-        spentAmount = this.spentAmount,
         payments = this.payments.map { it.toDto() }.associateBy { it.id }
 
     )
@@ -130,7 +127,6 @@ fun BudgetCategoryDto.toModel(): BudgetCategory {
         id = this.id,
         name = this.name,
         budgetAmount = this.budgetAmount,
-        spentAmount = this.spentAmount,
         payments = this.payments.values.map { it.toModel() }
     )
 }

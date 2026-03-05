@@ -12,6 +12,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
+import com.bungalow.budget.ui.screen.category_details.CategoryDetailsScreen
 import com.bungalow.budget.ui.screen.home.HomeScreen
 import com.bungalow.budget.ui.screen.login.LoginScreen
 import com.bungalow.budget.ui.screen.start_budget.StartBudgetScreen
@@ -45,14 +46,21 @@ fun MainNavHost() {
                     .windowInsetsPadding(WindowInsets.systemBars)
             ) {
                 HomeScreen(
-                    onStartBudgetClick = { navController.navigate(Route.StartBudget.getRoute(-1)) },
-                    onBudgetSettingsClick = { navController.navigate(Route.StartBudget.getRoute(it)) }
+                    onStartBudgetClick = {
+                        navController.navigate(Route.StartBudget.getRoute(-1))
+                    },
+                    onBudgetSettingsClick = {
+                        navController.navigate(Route.StartBudget.getRoute(it))
+                    },
+                    onCategoryClick = { budgetId, categoryId ->
+                        navController.navigate(Route.CategoryDetails.getRoute(budgetId, categoryId))
+                    }
                 )
             }
         }
         composable(
             Route.StartBudget.route,
-            arguments = listOf(navArgument(NavArg.BUDGET_ID) { type = NavType.IntType })
+            arguments = listOf(navArgument(ARG_BUDGET_ID) { type = NavType.IntType })
         ) {
             Box(
                 modifier = Modifier
@@ -60,6 +68,21 @@ fun MainNavHost() {
                     .windowInsetsPadding(WindowInsets.systemBars)
             ) {
                 StartBudgetScreen()
+            }
+        }
+        composable(
+            Route.CategoryDetails.route,
+            arguments = listOf(
+                navArgument(ARG_BUDGET_ID) { type = NavType.IntType },
+                navArgument(ARG_CATEGORY_ID) { type = NavType.StringType },
+            )
+        ) {
+            Box(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .windowInsetsPadding(WindowInsets.systemBars)
+            ) {
+                CategoryDetailsScreen()
             }
         }
     }

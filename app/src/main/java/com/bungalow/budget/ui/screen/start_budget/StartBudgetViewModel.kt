@@ -3,6 +3,7 @@ package com.bungalow.budget.ui.screen.start_budget
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.bungalow.budget.ui.navigation.ARG_BUDGET_ID
 import com.bungalow.budget.ui.navigation.NavArg
 import com.investigate.domain.model.Budget
 import com.investigate.domain.model.BudgetCategory
@@ -30,7 +31,7 @@ class StartBudgetViewModel @Inject constructor(
     savedStateHandle: SavedStateHandle
 ): ViewModel() {
 
-    val budgetId: Int = savedStateHandle[NavArg.BUDGET_ID] ?: -1
+    val budgetId: Int = savedStateHandle[ARG_BUDGET_ID] ?: -1
 
     private val _budget = MutableStateFlow(Budget.empty())
     val budget: StateFlow<Budget> = _budget
@@ -118,7 +119,6 @@ class StartBudgetViewModel @Inject constructor(
                     categories = _budget.value.categories.map { BudgetCategory(
                         name = it.name,
                         budgetAmount = it.budgetAmount,
-                        spentAmount = 0,
                         payments = emptyList()
                     ) },
                     startDateMillis = System.currentTimeMillis(),

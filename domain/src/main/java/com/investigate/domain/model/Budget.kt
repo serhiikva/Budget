@@ -10,6 +10,7 @@ data class Budget(
     val isActive: Boolean,
     val lastModified: Long
 ) {
+
     companion object {
         fun empty(): Budget {
             return Budget(

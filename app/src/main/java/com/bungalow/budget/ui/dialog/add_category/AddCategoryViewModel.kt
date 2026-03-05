@@ -42,7 +42,6 @@ class AddCategoryViewModel @Inject constructor(): ViewModel() {
                 BudgetCategory(
                     name = _name.value ?: "",
                     budgetAmount = _amount.value?.toIntOrNull() ?: 0,
-                    spentAmount = 0,
                     payments = emptyList()
                 )
             )

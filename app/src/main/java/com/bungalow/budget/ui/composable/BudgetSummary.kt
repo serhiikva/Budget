@@ -53,23 +53,6 @@ fun BudgetSummary(
 
     val progress = (budgetSpentAmount.toFloat() / budgetAmount).coerceIn(0f, 1f)
 
-//    val now = System.currentTimeMillis()
-//
-//    val periodDuration = TimeUnit.DAYS.toMillis(30)
-//
-//    val periodProgress = ((now - budget.startDateMillis) / periodDuration.toFloat()).coerceIn(0f, 1f)
-//
-//    val ratio = if (periodProgress > progress) 0f
-//    else progress / periodProgress
-//
-//    Timber.d("check task progress: $progress, period progress: $periodProgress, ration: $ratio")
-//
-//    val progressColor = when {
-//        ratio <= 0.9f -> ProgressSafe
-//        ratio <= 1.1f -> ProgressWarning
-//        else -> ProgressDanger
-//    }
-
     val progressColor = when {
         progress < 0.6f -> ProgressSafe
         progress < 0.9f -> ProgressWarning
@@ -97,7 +80,6 @@ fun BudgetSummary(
 
             Spacer(modifier = Modifier.height(16.dp))
 
-            // Big progress bar
             Box(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -116,7 +98,6 @@ fun BudgetSummary(
 
             Spacer(modifier = Modifier.height(16.dp))
 
-            // Amounts row
             Row(
                 verticalAlignment = Alignment.CenterVertically
             ) {
@@ -133,7 +114,6 @@ fun BudgetSummary(
                     )
                 }
 
-                // Optional subtle action
                 FilledTonalButton(
                     onClick = { onBudgetSettingsClick(budget) },
                     shape = RoundedCornerShape(12.dp),

@@ -50,7 +50,7 @@ fun AddPaymentDialog(
             ) {
 
                 Text(
-                    text = stringResource(R.string.dialog_add_payment_title),
+                    text = stringResource(viewModel.mode.titleResId),
                     style = MaterialTheme.typography.titleLarge
                 )
 

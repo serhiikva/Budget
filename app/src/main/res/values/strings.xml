@@ -6,6 +6,10 @@
     <string name="general.amount">Amount</string>
     <string name="general.name">Name</string>
     <string name="general.note">Note</string>
+    <string name="general.edit">Edit</string>
+    <string name="general.delete">Delete</string>
+    <string name="general.amount_with_value">Amount: %s</string>
+    <string name="general.note_with_value">Note: %s</string>
 
     <string name="home.start_budget">Start Budget</string>
     <string name="home.budget_summary">Budget Summary</string>
@@ -13,11 +17,15 @@
     <string name="start_budget.add_category">Add Category</string>
     <string name="start_budget.add_member">Add Member</string>
     <string name="start_budget.finish">Finish Budget And Start New One</string>
-    <string name="start_budget.finish_budget_dialog.title">Finish Budget</string>
+    <string name="start_budget.finish_budget_dialog.title">Finish Budget?</string>
     <string name="start_budget.finish_budget_dialog.description">Are you sure you want to finish the budget?</string>
 
     <string name="dialog.add_category.title">Add Category</string>
 
-    <string name="dialog.add_payment.title">Add Payment</string>
+    <string name="dialog.add_payment.title_mode_add">Add Payment</string>
+    <string name="dialog.add_payment.title_mode_edit">Edit Payment</string>
     <string name="dialog.add_payment.category">Category: %s</string>
+
+    <string name="category_details.delete_payment_dialog.title">Delete Payment?</string>
+    <string name="category_details.delete_payment_dialog.description">Are you sure you want to delete the payment?</string>
 </resources>
