@@ -1,3 +1,5 @@
+import org.codehaus.groovy.runtime.ArrayTypeUtils.dimension
+
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.compose)
@@ -28,6 +30,18 @@ android {
             storePassword = "budget131pass"
             keyAlias = "budgetalias"
             keyPassword = "budget131pass"
+        }
+    }
+
+    flavorDimensions += "environment"
+
+    productFlavors {
+        create("dev") {
+            dimension = "environment"
+        }
+
+        create("prod") {
+            dimension = "environment"
         }
     }
 

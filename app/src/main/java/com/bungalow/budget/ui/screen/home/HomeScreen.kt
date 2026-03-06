@@ -12,10 +12,12 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material3.Button
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -178,8 +180,15 @@ private fun CategoryList(
         items(categoryList) {
             com.bungalow.budget.ui.composable.BudgetCategory(
                 category = it,
-                onAddCategoryPaymentClick = onAddCategoryPaymentClick,
-                onCategoryClick = { category -> onCategoryClick(budgetId, category.id) }
+                onActionButtonClick = onAddCategoryPaymentClick,
+                onCategoryClick = { category -> onCategoryClick(budgetId, category.id) },
+                actionButtonContent = {
+                    Icon(
+                        imageVector = Icons.Default.Add,
+                        contentDescription = "Add Payment",
+                        tint = MaterialTheme.colorScheme.onSurface
+                    )
+                }
             )
         }
     }
@@ -193,6 +202,6 @@ private fun HomeScreenPreview() {
         onStartBudgetClick = {},
         onAddCategoryPaymentClick = {},
         onBudgetSettingsClick = {},
-        onCategoryClick = {_,_ ->}
+        onCategoryClick = {_,_ ->},
     )
 }

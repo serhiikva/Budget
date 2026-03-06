@@ -1,13 +1,13 @@
-package com.bungalow.budget.ui.screen.start_budget
+package com.bungalow.budget.ui.screen.budget_settings
 
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.bungalow.budget.ui.navigation.ARG_BUDGET_ID
-import com.bungalow.budget.ui.navigation.NavArg
 import com.investigate.domain.model.Budget
 import com.investigate.domain.model.BudgetCategory
 import com.investigate.domain.usecase.CreateBudgetUseCase
+import com.investigate.domain.usecase.DeleteCategoryUseCase
 import com.investigate.domain.usecase.FinishAndCreateNewBudgetUseCase
 import com.investigate.domain.usecase.GetUserEmailUseCase
 import com.investigate.domain.usecase.ObserveActiveBudgetUseCase
@@ -16,34 +16,38 @@ import com.investigate.domain.usecase.UpdateBudgetUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
-import timber.log.Timber
 import javax.inject.Inject
 
 @HiltViewModel
-class StartBudgetViewModel @Inject constructor(
+class BudgetSettingsViewModel @Inject constructor(
     private val createBudgetUseCase: CreateBudgetUseCase,
     private val observeActiveBudgetUseCase: ObserveActiveBudgetUseCase,
     private val observeBudgetByIdUseCase: ObserveBudgetByIdUseCase,
     private val getUserEmailUseCase: GetUserEmailUseCase,
     private val updateBudgetUseCase: UpdateBudgetUseCase,
     private val finishAndCreateNewBudgetUseCase: FinishAndCreateNewBudgetUseCase,
+    private val deleteCategoryUseCase: DeleteCategoryUseCase,
     savedStateHandle: SavedStateHandle
 ): ViewModel() {
 
     val budgetId: Int = savedStateHandle[ARG_BUDGET_ID] ?: -1
 
     private val _budget = MutableStateFlow(Budget.empty())
-    val budget: StateFlow<Budget> = _budget
+    val budget = _budget.asStateFlow()
 
     private val _showAddCategoryDialog = MutableStateFlow(false)
-    val showAddCategoryDialog: StateFlow<Boolean> = _showAddCategoryDialog
+    val showAddCategoryDialog = _showAddCategoryDialog.asStateFlow()
+
+    private val _showDeleteCategoryDialog = MutableStateFlow("")
+    val showDeleteCategoryDialog = _showDeleteCategoryDialog.asStateFlow()
 
     private val _showAddMemberDialog = MutableStateFlow(false)
-    val showAddMemberDialog: StateFlow<Boolean> = _showAddMemberDialog
+    val showAddMemberDialog = _showAddMemberDialog.asStateFlow()
 
     private val _showConfirmFinishBudgetDialog = MutableStateFlow(false)
-    val showConfirmFinishBudgetDialog: StateFlow<Boolean> = _showConfirmFinishBudgetDialog
+    val showConfirmFinishBudgetDialog = _showConfirmFinishBudgetDialog.asStateFlow()
 
     init {
         viewModelScope.launch {
@@ -83,6 +87,24 @@ class StartBudgetViewModel @Inject constructor(
 
     fun onAddCategoryDismissed() {
         _showAddCategoryDialog.value = false
+    }
+
+    fun onDeleteCategoryClick(category: BudgetCategory) {
+        _showDeleteCategoryDialog.value = category.id
+    }
+
+    fun onDeleteCategoryConfirmed(categoryId: String) {
+        viewModelScope.launch {
+            deleteCategoryUseCase(
+                budgetId = budgetId,
+                categoryId = categoryId
+            )
+            _showDeleteCategoryDialog.value = ""
+        }
+    }
+
+    fun onDeleteCategoryDismissed() {
+        _showDeleteCategoryDialog.value = ""
     }
 
     fun onAddMemberClick() {

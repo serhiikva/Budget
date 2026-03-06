@@ -15,7 +15,7 @@ import androidx.navigation.navArgument
 import com.bungalow.budget.ui.screen.category_details.CategoryDetailsScreen
 import com.bungalow.budget.ui.screen.home.HomeScreen
 import com.bungalow.budget.ui.screen.login.LoginScreen
-import com.bungalow.budget.ui.screen.start_budget.StartBudgetScreen
+import com.bungalow.budget.ui.screen.budget_settings.StartBudgetScreen
 
 @Composable
 fun MainNavHost() {
@@ -67,7 +67,9 @@ fun MainNavHost() {
                     .fillMaxSize()
                     .windowInsetsPadding(WindowInsets.systemBars)
             ) {
-                StartBudgetScreen()
+                StartBudgetScreen(
+                    onBackClick = { navController.popBackStack() }
+                )
             }
         }
         composable(
@@ -82,7 +84,9 @@ fun MainNavHost() {
                     .fillMaxSize()
                     .windowInsetsPadding(WindowInsets.systemBars)
             ) {
-                CategoryDetailsScreen()
+                CategoryDetailsScreen(
+                    onBackClick = { navController.popBackStack() }
+                )
             }
         }
     }

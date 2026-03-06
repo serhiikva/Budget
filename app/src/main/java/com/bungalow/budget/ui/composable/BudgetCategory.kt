@@ -1,20 +1,18 @@
 package com.bungalow.budget.ui.composable
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
@@ -23,15 +21,12 @@ import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.FilledTonalButton
 import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
-import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import com.bungalow.budget.ui.theme.ProgressDanger
 import com.bungalow.budget.ui.theme.ProgressSafe
@@ -39,13 +34,13 @@ import com.bungalow.budget.ui.theme.ProgressWarning
 import com.bungalow.budget.utils.getSpentAmount
 import com.bungalow.budget.utils.toSentenceCase
 import com.investigate.domain.model.BudgetCategory
-import java.util.concurrent.TimeUnit
 
 @Composable
 fun BudgetCategory(
     category: BudgetCategory,
-    onAddCategoryPaymentClick: (BudgetCategory) -> Unit,
+    onActionButtonClick: (BudgetCategory) -> Unit,
     onCategoryClick: (BudgetCategory) -> Unit,
+    actionButtonContent: @Composable RowScope.() -> Unit,
     modifier: Modifier = Modifier
 ) {
     val budgetSpentAmount = category.getSpentAmount()
@@ -111,16 +106,11 @@ fun BudgetCategory(
                 Spacer(modifier = Modifier.width(8.dp))
 
                 FilledTonalButton(
-                    onClick = { onAddCategoryPaymentClick(category) },
+                    onClick = { onActionButtonClick(category) },
                     shape = RoundedCornerShape(12.dp),
-                    contentPadding = PaddingValues(6.dp)
-                ) {
-                    Icon(
-                        imageVector = Icons.Default.Add,
-                        contentDescription = "Add Payment",
-                        tint = MaterialTheme.colorScheme.onSurface
-                    )
-                }
+                    contentPadding = PaddingValues(6.dp),
+                    content = actionButtonContent
+                )
             }
         }
     }

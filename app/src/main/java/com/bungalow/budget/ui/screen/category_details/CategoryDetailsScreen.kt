@@ -30,6 +30,7 @@ import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.bungalow.budget.R
 import com.bungalow.budget.ui.composable.BudgetCategory
+import com.bungalow.budget.ui.composable.NavigationToolbar
 import com.bungalow.budget.ui.dialog.add_payment.AddPaymentDialog
 import com.bungalow.budget.ui.dialog.add_payment.AddPaymentViewModel
 import com.bungalow.budget.utils.getMockedCategories
@@ -41,6 +42,7 @@ import com.investigate.domain.model.CategoryPayment
 fun CategoryDetailsScreen(
     viewModel: CategoryDetailsViewModel = hiltViewModel(),
     addPaymentViewModel: AddPaymentViewModel = hiltViewModel(),
+    onBackClick: () -> Unit
 ) {
     val category by viewModel.category.collectAsStateWithLifecycle()
     val showEditPaymentDialog by viewModel.showEditPaymentDialog.collectAsStateWithLifecycle()
@@ -50,7 +52,8 @@ fun CategoryDetailsScreen(
         Content(
             category = it,
             onEditPaymentClick = viewModel::onEditPaymentClick,
-            onDeletePaymentClick = viewModel::onDeletePaymentClick
+            onDeletePaymentClick = viewModel::onDeletePaymentClick,
+            onBackClick = onBackClick
         )
     }
 
@@ -103,14 +106,22 @@ private fun Content(
     category: BudgetCategory,
     onEditPaymentClick: (CategoryPayment) -> Unit,
     onDeletePaymentClick: (CategoryPayment) -> Unit,
+    onBackClick: () -> Unit
 ) {
     Column(
         modifier = Modifier.fillMaxSize()
     ) {
+        NavigationToolbar(
+            titleResId = R.string.category_details_title,
+            onBackClick = onBackClick
+        )
         BudgetCategory(
             category = category,
-            onAddCategoryPaymentClick = {},
-            onCategoryClick = {}
+            onActionButtonClick = {},
+            onCategoryClick = {},
+            actionButtonContent = {
+
+            }
         )
         PaymentsList(
             payments = category.payments,
@@ -199,6 +210,7 @@ private fun HomeScreenPreview() {
     Content(
         category = getMockedCategories().first(),
         onEditPaymentClick = {},
-        onDeletePaymentClick = {}
+        onDeletePaymentClick = {},
+        onBackClick = {}
     )
 }

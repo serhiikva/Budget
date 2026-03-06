@@ -1,4 +1,6 @@
-package com.bungalow.budget.ui.screen.start_budget
+@file:OptIn(ExperimentalMaterial3Api::class)
+
+package com.bungalow.budget.ui.screen.budget_settings
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -9,8 +11,13 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
@@ -24,6 +31,7 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.bungalow.budget.R
+import com.bungalow.budget.ui.composable.NavigationToolbar
 import com.bungalow.budget.ui.dialog.add_category.AddCategoryDialog
 import com.bungalow.budget.ui.dialog.add_category.AddCategoryViewModel
 import com.bungalow.budget.ui.dialog.add_member.AddMemberDialog
@@ -35,20 +43,24 @@ import com.investigate.domain.model.BudgetCategory
 
 @Composable
 fun StartBudgetScreen(
-    viewModel: StartBudgetViewModel = hiltViewModel(),
+    viewModel: BudgetSettingsViewModel = hiltViewModel(),
     addCategoryViewModel: AddCategoryViewModel = hiltViewModel(),
-    addMemberViewModel: AddMemberViewModel = hiltViewModel()
+    addMemberViewModel: AddMemberViewModel = hiltViewModel(),
+    onBackClick: () -> Unit
 ) {
     val budget by viewModel.budget.collectAsStateWithLifecycle()
     val showAddCategoryDialog by viewModel.showAddCategoryDialog.collectAsStateWithLifecycle()
     val showAddMemberDialog by viewModel.showAddMemberDialog.collectAsStateWithLifecycle()
     val showConfirmFinishBudgetDialog by viewModel.showConfirmFinishBudgetDialog.collectAsStateWithLifecycle()
+    val categoryIdToDelete by viewModel.showDeleteCategoryDialog.collectAsStateWithLifecycle()
 
     Content(
         budget = budget,
         onAddCategoryClick = viewModel::onAddCategoryClick,
         onAddMemberClick = viewModel::onAddMemberClick,
         onFinishBudgetClick = viewModel::onFinishBudgetClick,
+        onDeleteCategoryClick = viewModel::onDeleteCategoryClick,
+        onBackClick = onBackClick
     )
 
     LaunchedEffect(showAddCategoryDialog) {
@@ -100,6 +112,32 @@ fun StartBudgetScreen(
             }
         )
     }
+
+    if (categoryIdToDelete.isNotEmpty()) {
+        AlertDialog(
+            onDismissRequest = viewModel::onDeleteCategoryDismissed,
+            title = {
+                Text(text = stringResource(R.string.start_budget_delete_category_dialog_title))
+            },
+            text = {
+                Text(text = stringResource(R.string.start_budget_delete_category_dialog_description))
+            },
+            confirmButton = {
+                TextButton(
+                    onClick = { viewModel.onDeleteCategoryConfirmed(categoryIdToDelete) }
+                ) {
+                    Text(text = stringResource(R.string.general_apply))
+                }
+            },
+            dismissButton = {
+                TextButton(
+                    onClick = viewModel::onDeleteCategoryDismissed
+                ) {
+                    Text(text = stringResource(R.string.general_cancel))
+                }
+            }
+        )
+    }
 }
 
 @Composable
@@ -108,13 +146,20 @@ private fun Content(
     onAddCategoryClick: () -> Unit,
     onAddMemberClick: () -> Unit,
     onFinishBudgetClick: () -> Unit,
+    onDeleteCategoryClick: (BudgetCategory) -> Unit,
+    onBackClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
     Column(
         modifier = modifier.fillMaxSize()
     ) {
+        NavigationToolbar(
+            titleResId = R.string.start_budget_title,
+            onBackClick = onBackClick
+        )
         Categories(
             categories = budget.categories,
+            onDeleteCategoryClick = onDeleteCategoryClick,
             modifier = Modifier.weight(1f)
         )
         Spacer(modifier = Modifier.height(small))
@@ -154,6 +199,7 @@ private fun Content(
 @Composable
 private fun Categories(
     categories: List<BudgetCategory>,
+    onDeleteCategoryClick: (BudgetCategory) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     LazyColumn (
@@ -165,8 +211,15 @@ private fun Categories(
         items(categories) {
             com.bungalow.budget.ui.composable.BudgetCategory(
                 category = it,
-                onAddCategoryPaymentClick = {},
-                onCategoryClick = {}
+                onActionButtonClick = onDeleteCategoryClick,
+                onCategoryClick = {},
+                actionButtonContent = {
+                    Icon(
+                        imageVector = Icons.Default.Delete,
+                        contentDescription = "Add Payment",
+                        tint = MaterialTheme.colorScheme.onSurface
+                    )
+                }
             )
         }
     }
@@ -184,5 +237,7 @@ private fun StartBudgetScreenPreview() {
         onAddCategoryClick = {},
         onAddMemberClick = {},
         onFinishBudgetClick = {},
+        onBackClick = {},
+        onDeleteCategoryClick = {}
     )
 }

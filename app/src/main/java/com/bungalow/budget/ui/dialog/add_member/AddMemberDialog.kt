@@ -45,7 +45,7 @@ fun AddMemberDialog(
             ) {
 
                 Text(
-                    text = stringResource(R.string.dialog_add_category_title),
+                    text = stringResource(R.string.dialog_add_member_title),
                     style = MaterialTheme.typography.titleLarge
                 )
 
@@ -54,7 +54,7 @@ fun AddMemberDialog(
                 OutlinedTextField(
                     value = name ?: "",
                     onValueChange = { viewModel.onNameChanged(it) },
-                    label = { Text(stringResource(R.string.general_name)) }
+                    label = { Text(stringResource(R.string.general_email)) }
                 )
 
                 Spacer(Modifier.height(extraMedium))
