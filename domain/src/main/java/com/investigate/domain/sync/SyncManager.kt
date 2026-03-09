@@ -1,9 +1,7 @@
 package com.investigate.domain.sync
 
-import android.content.Context
 import com.investigate.domain.repository.BudgetRepository
 import com.investigate.domain.repository.RemoteRepository
-import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
@@ -20,7 +18,6 @@ import kotlin.concurrent.atomics.ExperimentalAtomicApi
 class SyncManager @Inject constructor(
     private val budgetRepository: BudgetRepository,
     private val remoteRepository: RemoteRepository,
-    @param:ApplicationContext private val context: Context
 ) {
     private val syncScope = CoroutineScope(SupervisorJob() + Dispatchers.IO)
     private var isRunning = AtomicBoolean(false)
@@ -32,14 +29,17 @@ class SyncManager @Inject constructor(
         syncScope.launch {
             budgetRepository.observeActiveBudget()
                 .collect {
-                    it?.let {
-                        Timber.d("Active budget is changed, begin sync")
-//                        try {
+                    it?.let { activeBudget ->
+                        val isRequiredUpdate = (remoteRepository
+                            .getBudgetLastModifiedMillis(activeBudget.id)
+                            ?: 0L) < activeBudget.lastModified
+
+                        if (isRequiredUpdate) {
+                            Timber.d("Active budget is changed, begin sync")
                             remoteRepository.saveBudget(it)
-//                        } catch (e: Exception) {
-//                            Timber.d("Failed to send budget to remote Firebase, message: ${e.message}")
-//                            SendToRemoteFirebaseWorker.enqueue(it.id, context)
-//                        }
+                        } else {
+                            Timber.d("Nothing is changed, skip")
+                        }
                     }
                 }
         }

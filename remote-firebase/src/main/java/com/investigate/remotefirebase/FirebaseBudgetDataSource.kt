@@ -8,6 +8,7 @@ import com.investigate.remotefirebase.model.BudgetDto
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.callbackFlow
+import kotlinx.coroutines.tasks.await
 import javax.inject.Inject
 
 class FirebaseBudgetDataSource @Inject constructor(
@@ -49,7 +50,7 @@ class FirebaseBudgetDataSource @Inject constructor(
         awaitClose { ref.removeEventListener(listener) }
     }
 
-    suspend fun saveBudget(dto: BudgetDto) {
+    fun saveBudget(dto: BudgetDto) {
         val budgetId = dto.id.toString()
         database.getReference("$BUDGETS/$budgetId").setValue(dto)
 
@@ -59,6 +60,23 @@ class FirebaseBudgetDataSource @Inject constructor(
         dto.sharedWithEmails.keys.forEach { email ->
             database.getReference("$USERS/$email/$budgetId")
                 .setValue(true)
+        }
+    }
+
+    suspend fun getBudget(budgetId: Int): BudgetDto? {
+        return try {
+            val result = database
+                .getReference("$BUDGETS/$budgetId")
+                .get()
+                .await()
+
+            return if (result.exists()) {
+                result.getValue(BudgetDto::class.java)
+            } else {
+                null
+            }
+        } catch (e: Exception) {
+            null
         }
     }
 

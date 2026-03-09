@@ -23,7 +23,6 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.bungalow.budget.R
 import com.bungalow.budget.ui.theme.extraMedium
 import com.bungalow.budget.ui.theme.medium
-import com.investigate.domain.model.BudgetCategory
 
 @Composable
 fun AddMemberDialog(

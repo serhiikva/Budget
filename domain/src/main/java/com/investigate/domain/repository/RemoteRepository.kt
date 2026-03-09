@@ -6,4 +6,5 @@ import kotlinx.coroutines.flow.Flow
 interface RemoteRepository {
     fun observeBudgets(email: String): Flow<List<Budget>>
     suspend fun saveBudget(budget: Budget)
+    suspend fun getBudgetLastModifiedMillis(budgetId: Int): Long?
 }
