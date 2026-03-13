@@ -1,5 +1,9 @@
 package com.bungalow.budget.ui.composable
 
+import androidx.compose.animation.core.Animatable
+import androidx.compose.animation.core.animateFloatAsState
+import androidx.compose.animation.core.animateIntAsState
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
@@ -21,9 +25,14 @@ import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.FilledTonalButton
 import androidx.compose.material3.Icon
+import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateListOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -34,6 +43,7 @@ import com.bungalow.budget.ui.theme.ProgressWarning
 import com.bungalow.budget.utils.getSpentAmount
 import com.bungalow.budget.utils.toSentenceCase
 import com.investigate.domain.model.BudgetCategory
+import kotlinx.coroutines.launch
 
 @Composable
 fun BudgetCategory(
@@ -51,6 +61,15 @@ fun BudgetCategory(
         progress < 0.6f -> ProgressSafe
         progress < 0.9f -> ProgressWarning
         else -> ProgressDanger
+    }
+
+    val animatedProgress = remember { Animatable(progress) }
+
+    LaunchedEffect(budgetSpentAmount) {
+        animatedProgress.animateTo(
+            targetValue = budgetSpentAmount.toFloat() / budgetAmount,
+            animationSpec = tween(1000)
+        )
     }
 
     Card(
@@ -84,7 +103,7 @@ fun BudgetCategory(
                 ) {
                     Box(
                         modifier = Modifier
-                            .fillMaxWidth(progress)
+                            .fillMaxWidth(animatedProgress.value)
                             .fillMaxHeight()
                             .clip(RoundedCornerShape(50))
                             .background(progressColor)
@@ -95,10 +114,9 @@ fun BudgetCategory(
                             .fillMaxSize(),
                         contentAlignment = Alignment.Center
                     ) {
-                        Text(
-                            text = "${category.getSpentAmount()} / ${category.budgetAmount}",
-                            style = MaterialTheme.typography.bodySmall,
-                            color = MaterialTheme.colorScheme.onSurface
+                        AnimatedProgressText(
+                            value = budgetSpentAmount.toFloat(),
+                            maxValue = budgetAmount.toFloat(),
                         )
                     }
                 }

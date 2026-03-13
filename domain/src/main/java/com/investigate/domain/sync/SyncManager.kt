@@ -1,5 +1,6 @@
 package com.investigate.domain.sync
 
+import com.investigate.domain.model.Budget
 import com.investigate.domain.repository.BudgetRepository
 import com.investigate.domain.repository.RemoteRepository
 import kotlinx.coroutines.CoroutineScope
@@ -30,15 +31,25 @@ class SyncManager @Inject constructor(
             budgetRepository.observeActiveBudget()
                 .collect {
                     it?.let { activeBudget ->
-                        val isRequiredUpdate = (remoteRepository
+                        val lastModifiedTimeOnRemote = remoteRepository
                             .getBudgetLastModifiedMillis(activeBudget.id)
-                            ?: 0L) < activeBudget.lastModified
 
-                        if (isRequiredUpdate) {
-                            Timber.d("Active budget is changed, begin sync")
-                            remoteRepository.saveBudget(it)
-                        } else {
-                            Timber.d("Nothing is changed, skip")
+                        when {
+                            lastModifiedTimeOnRemote == null
+                                    || lastModifiedTimeOnRemote < activeBudget.lastModified -> {
+                                Timber.d("Active budget is changed, begin sync")
+                                remoteRepository.saveBudget(it)
+                            }
+                            lastModifiedTimeOnRemote > activeBudget.lastModified -> {
+                                remoteRepository.getBudgetById(activeBudget.id)?.let { remoteBudget ->
+                                    if (isUpdateRequired(remoteBudget)) {
+                                        budgetRepository.upsertBudget(remoteBudget)
+                                    }
+                                }
+                            }
+                            else -> {
+                                Timber.d("Nothing is changed, skip")
+                            }
                         }
                     }
                 }
@@ -47,11 +58,7 @@ class SyncManager @Inject constructor(
         syncScope.launch {
             remoteRepository.observeBudgets(email)
                 .map {
-                    it.filter { remote ->
-                        budgetRepository.getBudgetById(remote.id)?.let { local ->
-                            local.lastModified < remote.lastModified
-                        } ?: true
-                    }
+                    it.filter { remote -> isUpdateRequired(remote) }
                 }
                 .filter { it.isNotEmpty() }
                 .collect { budgets ->
@@ -61,6 +68,12 @@ class SyncManager @Inject constructor(
                     }
                 }
         }
+    }
+
+    private suspend fun isUpdateRequired(budget: Budget): Boolean {
+        return budgetRepository.getBudgetById(budget.id)?.let { local ->
+            local.lastModified < budget.lastModified
+        } ?: true
     }
 
     fun stopSync() {

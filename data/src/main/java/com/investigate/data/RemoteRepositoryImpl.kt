@@ -39,7 +39,11 @@ class RemoteRepositoryImpl @Inject constructor(
         firebaseRemoteDataSource.saveBudget(budget.toDto())
     }
 
+    override suspend fun getBudgetById(budgetId: Int): Budget? {
+        return firebaseRemoteDataSource.getBudget(budgetId)?.toModel()
+    }
+
     override suspend fun getBudgetLastModifiedMillis(budgetId: Int): Long? {
-        return firebaseRemoteDataSource.getBudget(budgetId)?.lastModified
+        return getBudgetById(budgetId)?.lastModified
     }
 }
