@@ -1,5 +1,7 @@
 package com.bungalow.budget.ui.screen.category_details
 
+import androidx.compose.animation.AnimatedVisibilityScope
+import androidx.compose.animation.SharedTransitionScope
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
@@ -42,6 +44,8 @@ import com.investigate.domain.model.CategoryPayment
 fun CategoryDetailsScreen(
     viewModel: CategoryDetailsViewModel = hiltViewModel(),
     addPaymentViewModel: AddPaymentViewModel = hiltViewModel(),
+    animatedVisibilityScope: AnimatedVisibilityScope,
+    sharedTransitionScope: SharedTransitionScope,
     onBackClick: () -> Unit
 ) {
     val category by viewModel.category.collectAsStateWithLifecycle()
@@ -51,6 +55,8 @@ fun CategoryDetailsScreen(
     category?.let {
         Content(
             category = it,
+            animatedVisibilityScope = animatedVisibilityScope,
+            sharedTransitionScope = sharedTransitionScope,
             onEditPaymentClick = viewModel::onEditPaymentClick,
             onDeletePaymentClick = viewModel::onDeletePaymentClick,
             onBackClick = onBackClick
@@ -104,6 +110,8 @@ fun CategoryDetailsScreen(
 @Composable
 private fun Content(
     category: BudgetCategory,
+    animatedVisibilityScope: AnimatedVisibilityScope,
+    sharedTransitionScope: SharedTransitionScope,
     onEditPaymentClick: (CategoryPayment) -> Unit,
     onDeletePaymentClick: (CategoryPayment) -> Unit,
     onBackClick: () -> Unit
@@ -117,6 +125,8 @@ private fun Content(
         )
         BudgetCategory(
             category = category,
+            animatedVisibilityScope = animatedVisibilityScope,
+            sharedTransitionScope = sharedTransitionScope,
             onActionButtonClick = {},
             onCategoryClick = {},
             actionButtonContent = {
@@ -211,6 +221,8 @@ private fun HomeScreenPreview() {
         category = getMockedCategories().first(),
         onEditPaymentClick = {},
         onDeletePaymentClick = {},
-        onBackClick = {}
+        onBackClick = {},
+        animatedVisibilityScope = TODO(),
+        sharedTransitionScope = TODO()
     )
 }

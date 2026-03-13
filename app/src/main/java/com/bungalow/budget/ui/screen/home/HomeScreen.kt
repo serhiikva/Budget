@@ -1,5 +1,7 @@
 package com.bungalow.budget.ui.screen.home
 
+import androidx.compose.animation.AnimatedVisibilityScope
+import androidx.compose.animation.SharedTransitionScope
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -41,6 +43,8 @@ import com.investigate.domain.model.BudgetCategory
 fun HomeScreen(
     viewModel: HomeViewModel = hiltViewModel(),
     addPaymentViewModel: AddPaymentViewModel = hiltViewModel(),
+    animatedVisibilityScope: AnimatedVisibilityScope,
+    sharedTransitionScope: SharedTransitionScope,
     onStartBudgetClick: () -> Unit,
     onBudgetSettingsClick: (Int) -> Unit,
     onCategoryClick: (Int, String) -> Unit,
@@ -50,6 +54,8 @@ fun HomeScreen(
 
     Content(
         budget = budget,
+        animatedVisibilityScope = animatedVisibilityScope,
+        sharedTransitionScope = sharedTransitionScope,
         onStartBudgetClick = onStartBudgetClick,
         onAddCategoryPaymentClick = viewModel::onAddCategoryPaymentClick,
         onBudgetSettingsClick = onBudgetSettingsClick,
@@ -75,6 +81,8 @@ fun HomeScreen(
 @Composable
 private fun Content(
     budget: Budget,
+    animatedVisibilityScope: AnimatedVisibilityScope,
+    sharedTransitionScope: SharedTransitionScope,
     onStartBudgetClick: () -> Unit,
     onAddCategoryPaymentClick: (BudgetCategory) -> Unit,
     onBudgetSettingsClick: (Int) -> Unit,
@@ -83,6 +91,8 @@ private fun Content(
     if (budget.id != 0) {
         BudgetDetails(
             budget = budget,
+            animatedVisibilityScope = animatedVisibilityScope,
+            sharedTransitionScope = sharedTransitionScope,
             onAddCategoryPaymentClick = onAddCategoryPaymentClick,
             onBudgetSettingsClick = onBudgetSettingsClick,
             onCategoryClick = onCategoryClick
@@ -97,6 +107,8 @@ private fun Content(
 @Composable
 private fun BudgetDetails(
     budget: Budget,
+    animatedVisibilityScope: AnimatedVisibilityScope,
+    sharedTransitionScope: SharedTransitionScope,
     onAddCategoryPaymentClick: (BudgetCategory) -> Unit,
     onBudgetSettingsClick: (Int) -> Unit,
     onCategoryClick: (Int, String) -> Unit
@@ -114,6 +126,8 @@ private fun BudgetDetails(
         CategoryList(
             budgetId = budget.id,
             categoryList = budget.categories,
+            animatedVisibilityScope = animatedVisibilityScope,
+            sharedTransitionScope = sharedTransitionScope,
             onAddCategoryPaymentClick = onAddCategoryPaymentClick,
             onCategoryClick = onCategoryClick
         )
@@ -169,7 +183,9 @@ private fun CategoryList(
     categoryList: List<BudgetCategory>,
     onAddCategoryPaymentClick: (BudgetCategory) -> Unit,
     onCategoryClick: (Int, String) -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    animatedVisibilityScope: AnimatedVisibilityScope,
+    sharedTransitionScope: SharedTransitionScope,
 ) {
     LazyColumn (
         horizontalAlignment = Alignment.CenterHorizontally,
@@ -180,6 +196,8 @@ private fun CategoryList(
         items(categoryList) {
             com.bungalow.budget.ui.composable.BudgetCategory(
                 category = it,
+                animatedVisibilityScope = animatedVisibilityScope,
+                sharedTransitionScope = sharedTransitionScope,
                 onActionButtonClick = onAddCategoryPaymentClick,
                 onCategoryClick = { category -> onCategoryClick(budgetId, category.id) },
                 actionButtonContent = {
@@ -202,6 +220,8 @@ private fun HomeScreenPreview() {
         onStartBudgetClick = {},
         onAddCategoryPaymentClick = {},
         onBudgetSettingsClick = {},
-        onCategoryClick = {_,_ ->},
+        onCategoryClick = { _, _ -> },
+        animatedVisibilityScope = TODO(),
+        sharedTransitionScope = TODO(),
     )
 }

@@ -1,5 +1,6 @@
 package com.bungalow.budget.ui.navigation
 
+import androidx.compose.animation.SharedTransitionLayout
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
@@ -21,72 +22,85 @@ import com.bungalow.budget.ui.screen.budget_settings.StartBudgetScreen
 fun MainNavHost() {
     val navController = rememberNavController()
 
-    NavHost(navController = navController, startDestination = Route.Login.route) {
-        composable(Route.Login.route) {
-            Box(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .windowInsetsPadding(WindowInsets.systemBars)
-            ) {
-                LoginScreen(
-                    onLoggedIn = {
-                        navController.navigate(Route.Home.route) {
-                            popUpTo(Route.Login.route) {
-                                inclusive = true
+    SharedTransitionLayout {
+        NavHost(navController = navController, startDestination = Route.Login.route) {
+            composable(Route.Login.route) {
+                Box(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .windowInsetsPadding(WindowInsets.systemBars)
+                ) {
+                    LoginScreen(
+                        onLoggedIn = {
+                            navController.navigate(Route.Home.route) {
+                                popUpTo(Route.Login.route) {
+                                    inclusive = true
+                                }
                             }
                         }
-                    }
-                )
+                    )
+                }
             }
-        }
-        composable(Route.Home.route) {
-            Box(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .windowInsetsPadding(WindowInsets.systemBars)
-            ) {
-                HomeScreen(
-                    onStartBudgetClick = {
-                        navController.navigate(Route.StartBudget.getRoute(-1))
-                    },
-                    onBudgetSettingsClick = {
-                        navController.navigate(Route.StartBudget.getRoute(it))
-                    },
-                    onCategoryClick = { budgetId, categoryId ->
-                        navController.navigate(Route.CategoryDetails.getRoute(budgetId, categoryId))
-                    }
-                )
+            composable(Route.Home.route) {
+                Box(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .windowInsetsPadding(WindowInsets.systemBars)
+                ) {
+                    HomeScreen(
+                        animatedVisibilityScope = this@composable,
+                        sharedTransitionScope = this@SharedTransitionLayout,
+                        onStartBudgetClick = {
+                            navController.navigate(Route.StartBudget.getRoute(-1))
+                        },
+                        onBudgetSettingsClick = {
+                            navController.navigate(Route.StartBudget.getRoute(it))
+                        },
+                        onCategoryClick = { budgetId, categoryId ->
+                            navController.navigate(
+                                Route.CategoryDetails.getRoute(
+                                    budgetId,
+                                    categoryId
+                                )
+                            )
+                        }
+                    )
+                }
             }
-        }
-        composable(
-            Route.StartBudget.route,
-            arguments = listOf(navArgument(ARG_BUDGET_ID) { type = NavType.IntType })
-        ) {
-            Box(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .windowInsetsPadding(WindowInsets.systemBars)
+            composable(
+                Route.StartBudget.route,
+                arguments = listOf(navArgument(ARG_BUDGET_ID) { type = NavType.IntType })
             ) {
-                StartBudgetScreen(
-                    onBackClick = { navController.popBackStack() }
-                )
+                Box(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .windowInsetsPadding(WindowInsets.systemBars)
+                ) {
+                    StartBudgetScreen(
+                        animatedVisibilityScope = this@composable,
+                        sharedTransitionScope = this@SharedTransitionLayout,
+                        onBackClick = { navController.popBackStack() }
+                    )
+                }
             }
-        }
-        composable(
-            Route.CategoryDetails.route,
-            arguments = listOf(
-                navArgument(ARG_BUDGET_ID) { type = NavType.IntType },
-                navArgument(ARG_CATEGORY_ID) { type = NavType.StringType },
-            )
-        ) {
-            Box(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .windowInsetsPadding(WindowInsets.systemBars)
-            ) {
-                CategoryDetailsScreen(
-                    onBackClick = { navController.popBackStack() }
+            composable(
+                Route.CategoryDetails.route,
+                arguments = listOf(
+                    navArgument(ARG_BUDGET_ID) { type = NavType.IntType },
+                    navArgument(ARG_CATEGORY_ID) { type = NavType.StringType },
                 )
+            ) {
+                Box(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .windowInsetsPadding(WindowInsets.systemBars)
+                ) {
+                    CategoryDetailsScreen(
+                        animatedVisibilityScope = this@composable,
+                        sharedTransitionScope = this@SharedTransitionLayout,
+                        onBackClick = { navController.popBackStack() }
+                    )
+                }
             }
         }
     }

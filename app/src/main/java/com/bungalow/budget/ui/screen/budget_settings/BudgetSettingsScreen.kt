@@ -2,6 +2,8 @@
 
 package com.bungalow.budget.ui.screen.budget_settings
 
+import androidx.compose.animation.AnimatedVisibilityScope
+import androidx.compose.animation.SharedTransitionScope
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -46,6 +48,8 @@ fun StartBudgetScreen(
     viewModel: BudgetSettingsViewModel = hiltViewModel(),
     addCategoryViewModel: AddCategoryViewModel = hiltViewModel(),
     addMemberViewModel: AddMemberViewModel = hiltViewModel(),
+    animatedVisibilityScope: AnimatedVisibilityScope,
+    sharedTransitionScope: SharedTransitionScope,
     onBackClick: () -> Unit
 ) {
     val budget by viewModel.budget.collectAsStateWithLifecycle()
@@ -56,6 +60,8 @@ fun StartBudgetScreen(
 
     Content(
         budget = budget,
+        animatedVisibilityScope = animatedVisibilityScope,
+        sharedTransitionScope = sharedTransitionScope,
         onAddCategoryClick = viewModel::onAddCategoryClick,
         onAddMemberClick = viewModel::onAddMemberClick,
         onFinishBudgetClick = viewModel::onFinishBudgetClick,
@@ -143,6 +149,8 @@ fun StartBudgetScreen(
 @Composable
 private fun Content(
     budget: Budget,
+    animatedVisibilityScope: AnimatedVisibilityScope,
+    sharedTransitionScope: SharedTransitionScope,
     onAddCategoryClick: () -> Unit,
     onAddMemberClick: () -> Unit,
     onFinishBudgetClick: () -> Unit,
@@ -159,6 +167,8 @@ private fun Content(
         )
         Categories(
             categories = budget.categories,
+            animatedVisibilityScope = animatedVisibilityScope,
+            sharedTransitionScope = sharedTransitionScope,
             onDeleteCategoryClick = onDeleteCategoryClick,
             modifier = Modifier.weight(1f)
         )
@@ -199,6 +209,8 @@ private fun Content(
 @Composable
 private fun Categories(
     categories: List<BudgetCategory>,
+    animatedVisibilityScope: AnimatedVisibilityScope,
+    sharedTransitionScope: SharedTransitionScope,
     onDeleteCategoryClick: (BudgetCategory) -> Unit,
     modifier: Modifier = Modifier,
 ) {
@@ -211,6 +223,8 @@ private fun Categories(
         items(categories) {
             com.bungalow.budget.ui.composable.BudgetCategory(
                 category = it,
+                animatedVisibilityScope = animatedVisibilityScope,
+                sharedTransitionScope = sharedTransitionScope,
                 onActionButtonClick = onDeleteCategoryClick,
                 onCategoryClick = {},
                 actionButtonContent = {
@@ -238,6 +252,8 @@ private fun StartBudgetScreenPreview() {
         onAddMemberClick = {},
         onFinishBudgetClick = {},
         onBackClick = {},
-        onDeleteCategoryClick = {}
+        onDeleteCategoryClick = {},
+        animatedVisibilityScope = TODO(),
+        sharedTransitionScope = TODO(),
     )
 }
