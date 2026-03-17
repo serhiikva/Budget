@@ -1,12 +1,16 @@
 package com.bungalow.budget.ui.navigation
 
+import androidx.compose.animation.AnimatedVisibilityScope
 import androidx.compose.animation.SharedTransitionLayout
+import androidx.compose.animation.SharedTransitionScope
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.systemBars
 import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.runtime.compositionLocalOf
 import androidx.compose.ui.Modifier
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
@@ -17,6 +21,14 @@ import com.bungalow.budget.ui.screen.category_details.CategoryDetailsScreen
 import com.bungalow.budget.ui.screen.home.HomeScreen
 import com.bungalow.budget.ui.screen.login.LoginScreen
 import com.bungalow.budget.ui.screen.budget_settings.StartBudgetScreen
+
+val LocalSharedTransitionScope = compositionLocalOf<SharedTransitionScope> {
+    error("No SharedTransitionScope provided")
+}
+
+val LocalAnimatedVisibilityScope = compositionLocalOf<AnimatedVisibilityScope> {
+    error("No AnimatedVisibilityScope provided")
+}
 
 @Composable
 fun MainNavHost() {
@@ -42,29 +54,32 @@ fun MainNavHost() {
                 }
             }
             composable(Route.Home.route) {
-                Box(
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .windowInsetsPadding(WindowInsets.systemBars)
+                CompositionLocalProvider(
+                    LocalSharedTransitionScope provides this@SharedTransitionLayout,
+                    LocalAnimatedVisibilityScope provides this@composable
                 ) {
-                    HomeScreen(
-                        animatedVisibilityScope = this@composable,
-                        sharedTransitionScope = this@SharedTransitionLayout,
-                        onStartBudgetClick = {
-                            navController.navigate(Route.StartBudget.getRoute(-1))
-                        },
-                        onBudgetSettingsClick = {
-                            navController.navigate(Route.StartBudget.getRoute(it))
-                        },
-                        onCategoryClick = { budgetId, categoryId ->
-                            navController.navigate(
-                                Route.CategoryDetails.getRoute(
-                                    budgetId,
-                                    categoryId
+                    Box(
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .windowInsetsPadding(WindowInsets.systemBars)
+                    ) {
+                        HomeScreen(
+                            onStartBudgetClick = {
+                                navController.navigate(Route.StartBudget.getRoute(-1))
+                            },
+                            onBudgetSettingsClick = {
+                                navController.navigate(Route.StartBudget.getRoute(it))
+                            },
+                            onCategoryClick = { budgetId, categoryId ->
+                                navController.navigate(
+                                    Route.CategoryDetails.getRoute(
+                                        budgetId,
+                                        categoryId
+                                    )
                                 )
-                            )
-                        }
-                    )
+                            }
+                        )
+                    }
                 }
             }
             composable(
@@ -77,8 +92,6 @@ fun MainNavHost() {
                         .windowInsetsPadding(WindowInsets.systemBars)
                 ) {
                     StartBudgetScreen(
-                        animatedVisibilityScope = this@composable,
-                        sharedTransitionScope = this@SharedTransitionLayout,
                         onBackClick = { navController.popBackStack() }
                     )
                 }
@@ -90,16 +103,19 @@ fun MainNavHost() {
                     navArgument(ARG_CATEGORY_ID) { type = NavType.StringType },
                 )
             ) {
-                Box(
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .windowInsetsPadding(WindowInsets.systemBars)
+                CompositionLocalProvider(
+                    LocalSharedTransitionScope provides this@SharedTransitionLayout,
+                    LocalAnimatedVisibilityScope provides this@composable
                 ) {
-                    CategoryDetailsScreen(
-                        animatedVisibilityScope = this@composable,
-                        sharedTransitionScope = this@SharedTransitionLayout,
-                        onBackClick = { navController.popBackStack() }
-                    )
+                    Box(
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .windowInsetsPadding(WindowInsets.systemBars)
+                    ) {
+                        CategoryDetailsScreen(
+                            onBackClick = { navController.popBackStack() }
+                        )
+                    }
                 }
             }
         }

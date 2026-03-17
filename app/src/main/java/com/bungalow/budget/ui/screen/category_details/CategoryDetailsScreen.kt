@@ -1,7 +1,5 @@
 package com.bungalow.budget.ui.screen.category_details
 
-import androidx.compose.animation.AnimatedVisibilityScope
-import androidx.compose.animation.SharedTransitionScope
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
@@ -35,6 +33,8 @@ import com.bungalow.budget.ui.composable.BudgetCategory
 import com.bungalow.budget.ui.composable.NavigationToolbar
 import com.bungalow.budget.ui.dialog.add_payment.AddPaymentDialog
 import com.bungalow.budget.ui.dialog.add_payment.AddPaymentViewModel
+import com.bungalow.budget.ui.navigation.LocalAnimatedVisibilityScope
+import com.bungalow.budget.ui.navigation.LocalSharedTransitionScope
 import com.bungalow.budget.utils.getMockedCategories
 import com.bungalow.budget.utils.toLocalDateTime
 import com.investigate.domain.model.BudgetCategory
@@ -44,8 +44,6 @@ import com.investigate.domain.model.CategoryPayment
 fun CategoryDetailsScreen(
     viewModel: CategoryDetailsViewModel = hiltViewModel(),
     addPaymentViewModel: AddPaymentViewModel = hiltViewModel(),
-    animatedVisibilityScope: AnimatedVisibilityScope,
-    sharedTransitionScope: SharedTransitionScope,
     onBackClick: () -> Unit
 ) {
     val category by viewModel.category.collectAsStateWithLifecycle()
@@ -55,8 +53,6 @@ fun CategoryDetailsScreen(
     category?.let {
         Content(
             category = it,
-            animatedVisibilityScope = animatedVisibilityScope,
-            sharedTransitionScope = sharedTransitionScope,
             onEditPaymentClick = viewModel::onEditPaymentClick,
             onDeletePaymentClick = viewModel::onDeletePaymentClick,
             onBackClick = onBackClick
@@ -110,12 +106,13 @@ fun CategoryDetailsScreen(
 @Composable
 private fun Content(
     category: BudgetCategory,
-    animatedVisibilityScope: AnimatedVisibilityScope,
-    sharedTransitionScope: SharedTransitionScope,
     onEditPaymentClick: (CategoryPayment) -> Unit,
     onDeletePaymentClick: (CategoryPayment) -> Unit,
     onBackClick: () -> Unit
 ) {
+    val sharedScope = LocalSharedTransitionScope.current
+    val visibilityScope = LocalAnimatedVisibilityScope.current
+
     Column(
         modifier = Modifier.fillMaxSize()
     ) {
@@ -125,8 +122,8 @@ private fun Content(
         )
         BudgetCategory(
             category = category,
-            animatedVisibilityScope = animatedVisibilityScope,
-            sharedTransitionScope = sharedTransitionScope,
+            animatedVisibilityScope = visibilityScope,
+            sharedTransitionScope = sharedScope,
             onActionButtonClick = {},
             onCategoryClick = {},
             actionButtonContent = {
@@ -222,7 +219,5 @@ private fun HomeScreenPreview() {
         onEditPaymentClick = {},
         onDeletePaymentClick = {},
         onBackClick = {},
-        animatedVisibilityScope = TODO(),
-        sharedTransitionScope = TODO()
     )
 }
