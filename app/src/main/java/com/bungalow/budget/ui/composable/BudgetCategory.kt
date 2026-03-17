@@ -41,12 +41,12 @@ import com.investigate.domain.model.BudgetCategory
 @Composable
 fun BudgetCategory(
     category: BudgetCategory,
-    animatedVisibilityScope: AnimatedVisibilityScope,
-    sharedTransitionScope: SharedTransitionScope,
     onActionButtonClick: (BudgetCategory) -> Unit,
     onCategoryClick: (BudgetCategory) -> Unit,
     actionButtonContent: @Composable RowScope.() -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    animatedVisibilityScope: AnimatedVisibilityScope? = null,
+    sharedTransitionScope: SharedTransitionScope? = null,
 ) {
     val budgetSpentAmount = category.getSpentAmount()
     val budgetAmount = category.budgetAmount
@@ -72,9 +72,15 @@ fun BudgetCategory(
             modifier = modifier
                 .fillMaxWidth()
                 .padding(vertical = 4.dp)
-                .sharedElement(
-                    rememberSharedContentState(key = "category_${category.id}"),
-                    animatedVisibilityScope
+                .then(
+                    if (this != null && animatedVisibilityScope != null) {
+                        Modifier.sharedElement(
+                            rememberSharedContentState(key = "category_${category.id}"),
+                            animatedVisibilityScope
+                        )
+                    } else {
+                        Modifier
+                    }
                 ),
             shape = RoundedCornerShape(16.dp),
             elevation = CardDefaults.cardElevation(defaultElevation = 2.dp),

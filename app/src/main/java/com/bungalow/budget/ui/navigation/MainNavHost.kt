@@ -22,12 +22,12 @@ import com.bungalow.budget.ui.screen.home.HomeScreen
 import com.bungalow.budget.ui.screen.login.LoginScreen
 import com.bungalow.budget.ui.screen.budget_settings.StartBudgetScreen
 
-val LocalSharedTransitionScope = compositionLocalOf<SharedTransitionScope> {
-    error("No SharedTransitionScope provided")
+val LocalSharedTransitionScope = compositionLocalOf<SharedTransitionScope?> {
+    null
 }
 
-val LocalAnimatedVisibilityScope = compositionLocalOf<AnimatedVisibilityScope> {
-    error("No AnimatedVisibilityScope provided")
+val LocalAnimatedVisibilityScope = compositionLocalOf<AnimatedVisibilityScope?> {
+    null
 }
 
 @Composable
