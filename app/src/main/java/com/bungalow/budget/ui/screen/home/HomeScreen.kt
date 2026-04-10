@@ -13,6 +13,7 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material3.Button
 import androidx.compose.material3.Icon
@@ -46,6 +47,7 @@ fun HomeScreen(
     onStartBudgetClick: () -> Unit,
     onBudgetSettingsClick: (Int) -> Unit,
     onCategoryClick: (Int, String) -> Unit,
+    onMenuClick: () -> Unit
 ) {
     val budget by viewModel.budget.collectAsStateWithLifecycle()
     val categoryToAddPayment by viewModel.categoryToAddPayment.collectAsStateWithLifecycle(null)
@@ -55,7 +57,8 @@ fun HomeScreen(
         onStartBudgetClick = onStartBudgetClick,
         onAddCategoryPaymentClick = viewModel::onAddCategoryPaymentClick,
         onBudgetSettingsClick = onBudgetSettingsClick,
-        onCategoryClick = onCategoryClick
+        onCategoryClick = onCategoryClick,
+        onMenuClick = onMenuClick
     )
 
     LaunchedEffect(categoryToAddPayment) {
@@ -78,6 +81,7 @@ fun HomeScreen(
 private fun Content(
     budget: Budget,
     onStartBudgetClick: () -> Unit,
+    onMenuClick: () -> Unit,
     onAddCategoryPaymentClick: (BudgetCategory) -> Unit,
     onBudgetSettingsClick: (Int) -> Unit,
     onCategoryClick: (Int, String) -> Unit
@@ -87,7 +91,8 @@ private fun Content(
             budget = budget,
             onAddCategoryPaymentClick = onAddCategoryPaymentClick,
             onBudgetSettingsClick = onBudgetSettingsClick,
-            onCategoryClick = onCategoryClick
+            onCategoryClick = onCategoryClick,
+            onMenuClick = onMenuClick
         )
     } else {
         CreateBudget(
@@ -101,13 +106,15 @@ private fun BudgetDetails(
     budget: Budget,
     onAddCategoryPaymentClick: (BudgetCategory) -> Unit,
     onBudgetSettingsClick: (Int) -> Unit,
+    onMenuClick: () -> Unit,
     onCategoryClick: (Int, String) -> Unit
 ) {
     Column(
         modifier = Modifier.fillMaxSize()
     ) {
         Header(
-            onSettingsClick = {}
+            onSettingsClick = {},
+            onMenuClick = onMenuClick
         )
         BudgetSummary(
             budget = budget,
@@ -146,6 +153,7 @@ private fun CreateBudget(
 @Composable
 private fun Header(
     onSettingsClick: () -> Unit,
+    onMenuClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
     Row(
@@ -153,6 +161,14 @@ private fun Header(
         horizontalArrangement = Arrangement.SpaceBetween,
         modifier = modifier.fillMaxWidth()
     ) {
+        IconButton(
+            onClick = onMenuClick,
+        ) {
+            Icon(
+                imageVector = Icons.Default.Menu,
+                contentDescription = "menu"
+            )
+        }
         Spacer(modifier = Modifier.width(0.dp))
         IconButton(
             onClick = onSettingsClick,
@@ -210,5 +226,6 @@ private fun HomeScreenPreview() {
         onAddCategoryPaymentClick = {},
         onBudgetSettingsClick = {},
         onCategoryClick = { _, _ -> },
+        onMenuClick = {},
     )
 }

@@ -5,6 +5,7 @@ const val ROUTE_LOGIN = "login"
 const val ROUTE_HOME = "home"
 const val ROUTE_START_BUDGET = "startBudget"
 const val ROUTE_CATEGORY_DETAILS = "categoryDetails"
+const val ROUTE_HISTORY = "history"
 
 const val ARG_BUDGET_ID = "budgetId"
 const val ARG_CATEGORY_ID = "categoryId"
@@ -27,4 +28,6 @@ sealed class Route(val route: String) {
             return "$ROUTE_CATEGORY_DETAILS/$budgetId/$categoryId"
         }
     }
+
+    object History : Route(ROUTE_HISTORY)
 }
