@@ -13,12 +13,14 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material3.Button
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -31,6 +33,7 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.bungalow.budget.R
+import com.bungalow.budget.ui.composable.BudgetCategory
 import com.bungalow.budget.ui.composable.BudgetSummary
 import com.bungalow.budget.ui.dialog.add_payment.AddPaymentDialog
 import com.bungalow.budget.ui.dialog.add_payment.AddPaymentViewModel
@@ -51,9 +54,15 @@ fun HomeScreen(
 ) {
     val budget by viewModel.budget.collectAsStateWithLifecycle()
     val categoryToAddPayment by viewModel.categoryToAddPayment.collectAsStateWithLifecycle(null)
+    val search by viewModel.search.collectAsStateWithLifecycle()
+    val searchResult by viewModel.searchResult.collectAsStateWithLifecycle()
 
     Content(
         budget = budget,
+        search = search ?: "",
+        searchResult = searchResult ?: emptyList(),
+        onSearch = viewModel::onSearch,
+        onSearchFinished = viewModel::onSearchFinished,
         onStartBudgetClick = onStartBudgetClick,
         onAddCategoryPaymentClick = viewModel::onAddCategoryPaymentClick,
         onBudgetSettingsClick = onBudgetSettingsClick,
@@ -80,6 +89,10 @@ fun HomeScreen(
 @Composable
 private fun Content(
     budget: Budget,
+    search: String,
+    searchResult: List<BudgetCategory>,
+    onSearch: (String) -> Unit,
+    onSearchFinished: () -> Unit,
     onStartBudgetClick: () -> Unit,
     onMenuClick: () -> Unit,
     onAddCategoryPaymentClick: (BudgetCategory) -> Unit,
@@ -89,6 +102,10 @@ private fun Content(
     if (budget.id != 0) {
         BudgetDetails(
             budget = budget,
+            search = search,
+            searchResult = searchResult,
+            onSearch = onSearch,
+            onSearchFinished = onSearchFinished,
             onAddCategoryPaymentClick = onAddCategoryPaymentClick,
             onBudgetSettingsClick = onBudgetSettingsClick,
             onCategoryClick = onCategoryClick,
@@ -104,6 +121,10 @@ private fun Content(
 @Composable
 private fun BudgetDetails(
     budget: Budget,
+    search: String,
+    searchResult: List<BudgetCategory>,
+    onSearch: (String) -> Unit,
+    onSearchFinished: () -> Unit,
     onAddCategoryPaymentClick: (BudgetCategory) -> Unit,
     onBudgetSettingsClick: (Int) -> Unit,
     onMenuClick: () -> Unit,
@@ -120,12 +141,74 @@ private fun BudgetDetails(
             budget = budget,
             onBudgetSettingsClick = { onBudgetSettingsClick(it.id) }
         )
+        Search(
+            search = search,
+            searchResult = searchResult,
+            onSearch = onSearch,
+            onSearchFinished = onSearchFinished,
+        )
         CategoryList(
             budgetId = budget.id,
             categoryList = budget.categories,
             onAddCategoryPaymentClick = onAddCategoryPaymentClick,
             onCategoryClick = onCategoryClick
         )
+    }
+}
+
+@Composable
+private fun Search(
+    search: String,
+    searchResult: List<BudgetCategory>,
+    onSearch: (String) -> Unit,
+    onSearchFinished: () -> Unit
+) {
+    Column(
+        modifier = Modifier.fillMaxWidth()
+    ) {
+        Row(
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            OutlinedTextField(
+                value = search,
+                onValueChange = onSearch,
+                modifier = Modifier
+                    .weight(1f)
+                    .padding(8.dp)
+            )
+            IconButton(
+                onClick = onSearchFinished,
+                modifier = Modifier
+            ) {
+                Icon(
+                    imageVector = Icons.Default.Close,
+                    contentDescription = "menu"
+                )
+            }
+        }
+
+        LazyColumn(
+            modifier = Modifier.fillMaxWidth()
+        ) {
+            items(searchResult) {
+                Text(
+                    text = "Category: ${it.name}",
+                    modifier = Modifier.padding(start = 8.dp)
+                )
+                if (it.payments.isNotEmpty()) {
+                    Text(
+                        text = "Payments:",
+                        modifier = Modifier.padding(start = 12.dp)
+                    )
+                    it.payments.forEach {
+                        Text(
+                            text = "${it.amount}, ${it.note}",
+                            modifier = Modifier.padding(start = 16.dp)
+                        )
+                    }
+                }
+            }
+        }
     }
 }
 
@@ -199,7 +282,7 @@ private fun CategoryList(
             .fillMaxWidth()
     )  {
         items(categoryList) {
-            com.bungalow.budget.ui.composable.BudgetCategory(
+            BudgetCategory(
                 category = it,
                 animatedVisibilityScope = visibilityScope,
                 sharedTransitionScope = sharedScope,
@@ -222,6 +305,10 @@ private fun CategoryList(
 private fun HomeScreenPreview() {
     Content(
         budget = getMockedBudget(),
+        search = "Test search",
+        searchResult = emptyList(),
+        onSearch = {},
+        onSearchFinished = {},
         onStartBudgetClick = {},
         onAddCategoryPaymentClick = {},
         onBudgetSettingsClick = {},
