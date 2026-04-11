@@ -16,6 +16,7 @@ import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -100,32 +101,19 @@ fun BudgetCategory(
                 Row(
                     verticalAlignment = Alignment.CenterVertically
                 ) {
-                    Box(
-                        modifier = Modifier
-                            .weight(1f)
-                            .height(28.dp)
-                            .clip(RoundedCornerShape(50))
-                            .background(progressColor.copy(alpha = 0.15f))
-                    ) {
-                        Box(
-                            modifier = Modifier
-                                .fillMaxWidth(animatedProgress.value)
-                                .fillMaxHeight()
-                                .clip(RoundedCornerShape(50))
-                                .background(progressColor)
-                        )
-
-                        Box(
-                            modifier = Modifier
-                                .fillMaxSize(),
-                            contentAlignment = Alignment.Center
-                        ) {
+                    BudgetProgress(
+                        progressColor = progressColor,
+                        progress = progress,
+                        modifier = Modifier.weight(1f),
+                        content = {
                             AnimatedProgressText(
                                 value = budgetSpentAmount.toFloat(),
-                                maxValue = budgetAmount.toFloat(),
+                                maxValue = budgetAmount.toFloat()
                             )
-                        }
-                    }
+                        },
+                        contentModifier = Modifier
+                            .fillMaxSize()
+                    )
 
                     Spacer(modifier = Modifier.width(8.dp))
 
