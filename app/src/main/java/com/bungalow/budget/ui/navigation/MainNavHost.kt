@@ -22,6 +22,7 @@ import com.bungalow.budget.ui.screen.home.HomeScreen
 import com.bungalow.budget.ui.screen.login.LoginScreen
 import com.bungalow.budget.ui.screen.budget_settings.StartBudgetScreen
 import com.bungalow.budget.ui.screen.history.HistoryScreen
+import com.bungalow.budget.ui.screen.payments.PaymentsScreen
 
 val LocalSharedTransitionScope = compositionLocalOf<SharedTransitionScope?> {
     null
@@ -81,6 +82,9 @@ fun MainNavHost() {
                             },
                             onMenuClick = {
                                 navController.navigate(Route.History.route)
+                            },
+                            onPaymentsClick = {
+                                navController.navigate(Route.Payments.route)
                             }
                         )
                     }
@@ -131,6 +135,19 @@ fun MainNavHost() {
                         .windowInsetsPadding(WindowInsets.systemBars)
                 ) {
                     HistoryScreen(
+                        onBackClick = { navController.popBackStack() }
+                    )
+                }
+            }
+            composable(
+                Route.Payments.route
+            ) {
+                Box(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .windowInsetsPadding(WindowInsets.systemBars)
+                ) {
+                    PaymentsScreen(
                         onBackClick = { navController.popBackStack() }
                     )
                 }

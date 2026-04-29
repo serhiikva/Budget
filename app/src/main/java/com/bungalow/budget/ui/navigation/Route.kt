@@ -6,6 +6,7 @@ const val ROUTE_HOME = "home"
 const val ROUTE_START_BUDGET = "startBudget"
 const val ROUTE_CATEGORY_DETAILS = "categoryDetails"
 const val ROUTE_HISTORY = "history"
+const val ROUTE_PAYMENTS = "payments"
 
 const val ARG_BUDGET_ID = "budgetId"
 const val ARG_CATEGORY_ID = "categoryId"
@@ -30,4 +31,6 @@ sealed class Route(val route: String) {
     }
 
     object History : Route(ROUTE_HISTORY)
+
+    object Payments : Route(ROUTE_PAYMENTS)
 }

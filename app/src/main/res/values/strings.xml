@@ -32,6 +32,9 @@
     <string name="dialog.add_payment.category">Category: %s</string>
 
     <string name="category_details.title">Category Details</string>
+
+    <string name="payments_title">Payments</string>
+
     <string name="category_details.delete_payment_dialog.title">Delete Payment?</string>
     <string name="category_details.delete_payment_dialog.description">Are you sure you want to delete the payment?</string>
 </resources>
