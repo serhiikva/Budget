@@ -15,6 +15,28 @@ android {
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         consumerProguardFiles("consumer-rules.pro")
+        buildConfigField("String", "FIREBASE_BUDGETS_REF", "\"budgets_dev\"")
+        buildConfigField("String", "FIREBASE_USERS_REF", "\"users_dev\"")
+    }
+
+    flavorDimensions += "environment"
+
+    productFlavors {
+        create("dev") {
+            dimension = "environment"
+            buildConfigField("String", "FIREBASE_BUDGETS_REF", "\"budgets_dev\"")
+            buildConfigField("String", "FIREBASE_USERS_REF", "\"users_dev\"")
+        }
+
+        create("prod") {
+            dimension = "environment"
+            buildConfigField("String", "FIREBASE_BUDGETS_REF", "\"budgets\"")
+            buildConfigField("String", "FIREBASE_USERS_REF", "\"users\"")
+        }
+    }
+
+    buildFeatures {
+        buildConfig = true
     }
 
     buildTypes {
@@ -45,4 +67,6 @@ dependencies {
 
     implementation (libs.hilt.android)
     ksp(libs.hilt.android.compiler)
+
+    implementation(libs.timber)
 }

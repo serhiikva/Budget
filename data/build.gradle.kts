@@ -16,6 +16,21 @@ android {
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         consumerProguardFiles("consumer-rules.pro")
     }
+    flavorDimensions += "environment"
+
+    productFlavors {
+        create("dev") {
+            dimension = "environment"
+        }
+
+        create("prod") {
+            dimension = "environment"
+        }
+    }
+
+    buildFeatures {
+        buildConfig = true
+    }
 
     buildTypes {
         release {

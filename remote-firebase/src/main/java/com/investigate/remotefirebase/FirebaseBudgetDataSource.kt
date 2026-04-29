@@ -12,11 +12,12 @@ import kotlinx.coroutines.tasks.await
 import javax.inject.Inject
 
 class FirebaseBudgetDataSource @Inject constructor(
-    private val database: FirebaseDatabase
+    private val database: FirebaseDatabase,
+    private val config: FirebaseConfig
 ) {
 
     fun observeUserBudgetIds(emailBase64: String): Flow<List<String>> = callbackFlow {
-        val ref = database.getReference("$USERS/${emailBase64}")
+        val ref = database.getReference("${config.usersRef}/${emailBase64}")
 
         val listener = object : ValueEventListener {
             override fun onDataChange(snapshot: DataSnapshot) {
@@ -34,7 +35,7 @@ class FirebaseBudgetDataSource @Inject constructor(
     }
 
     fun observeBudget(id: String): Flow<BudgetDto?> = callbackFlow {
-        val ref = database.getReference("$BUDGETS/$id")
+        val ref = database.getReference("${config.budgetsRef}/$id")
 
         val listener = object : ValueEventListener {
             override fun onDataChange(snapshot: DataSnapshot) {
@@ -52,13 +53,13 @@ class FirebaseBudgetDataSource @Inject constructor(
 
     fun saveBudget(dto: BudgetDto) {
         val budgetId = dto.id.toString()
-        database.getReference("$BUDGETS/$budgetId").setValue(dto)
+        database.getReference("${config.budgetsRef}/$budgetId").setValue(dto)
 
-        database.getReference("$USERS/${dto.creatorEmail}/$budgetId")
+        database.getReference("${config.usersRef}/${dto.creatorEmail}/$budgetId")
             .setValue(true)
 
         dto.sharedWithEmails.keys.forEach { email ->
-            database.getReference("$USERS/$email/$budgetId")
+            database.getReference("${config.usersRef}/$email/$budgetId")
                 .setValue(true)
         }
     }
@@ -66,7 +67,7 @@ class FirebaseBudgetDataSource @Inject constructor(
     suspend fun getBudget(budgetId: Int): BudgetDto? {
         return try {
             val result = database
-                .getReference("$BUDGETS/$budgetId")
+                .getReference("${config.budgetsRef}/$budgetId")
                 .get()
                 .await()
 
@@ -78,10 +79,5 @@ class FirebaseBudgetDataSource @Inject constructor(
         } catch (e: Exception) {
             null
         }
-    }
-
-    companion object {
-        private const val BUDGETS = "budgets"
-        private const val USERS = "users"
     }
 }
