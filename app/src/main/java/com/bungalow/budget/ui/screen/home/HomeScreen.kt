@@ -142,6 +142,10 @@ private fun BudgetDetails(
     onCategoryClick: (Int, String) -> Unit
 ) {
     var isSearchExpanded by remember { mutableStateOf(false) }
+    val collapseSearch = {
+        onSearchFinished()
+        isSearchExpanded = false
+    }
 
     Column(
         modifier = Modifier.fillMaxSize()
@@ -150,10 +154,8 @@ private fun BudgetDetails(
             onPaymentsClick = onPaymentsClick,
             onMenuClick = onMenuClick,
             onSearchClick = {
-                if (isSearchExpanded) {
-                    onSearchFinished()
-                }
-                isSearchExpanded = !isSearchExpanded
+                if (isSearchExpanded) collapseSearch()
+                else isSearchExpanded = true
             }
         )
 
@@ -165,10 +167,7 @@ private fun BudgetDetails(
             Search(
                 search = search,
                 onSearch = onSearch,
-                onSearchFinished = {
-                    onSearchFinished()
-                    isSearchExpanded = false
-                },
+                onSearchFinished = collapseSearch,
             )
         }
 
@@ -320,12 +319,10 @@ private fun CategoryList(
     val sharedScope = LocalSharedTransitionScope.current
     val visibilityScope = LocalAnimatedVisibilityScope.current
 
-    LazyColumn (
+    LazyColumn(
         horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.Top,
-        modifier = modifier
-            .fillMaxWidth()
-    )  {
+        modifier = modifier.fillMaxWidth()
+    ) {
         items(categoryList) {
             BudgetCategory(
                 category = it,
