@@ -1,14 +1,16 @@
 package com.bungalow.budget.ui.screen.home
 
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.expandVertically
+import androidx.compose.animation.shrinkVertically
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
@@ -26,6 +28,9 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
@@ -136,88 +141,112 @@ private fun BudgetDetails(
     onPaymentsClick: () -> Unit,
     onCategoryClick: (Int, String) -> Unit
 ) {
+    var isSearchExpanded by remember { mutableStateOf(false) }
+
     Column(
         modifier = Modifier.fillMaxSize()
     ) {
         Header(
             onPaymentsClick = onPaymentsClick,
-            onMenuClick = onMenuClick
+            onMenuClick = onMenuClick,
+            onSearchClick = {
+                if (isSearchExpanded) {
+                    onSearchFinished()
+                }
+                isSearchExpanded = !isSearchExpanded
+            }
         )
-        BudgetSummary(
-            budget = budget,
-            onBudgetSettingsClick = { onBudgetSettingsClick(it.id) }
-        )
-        Search(
-            search = search,
-            searchResult = searchResult,
-            onSearch = onSearch,
-            onSearchFinished = onSearchFinished,
-        )
-        CategoryList(
-            budgetId = budget.id,
-            categoryList = budget.categories,
-            onAddCategoryPaymentClick = onAddCategoryPaymentClick,
-            onCategoryClick = onCategoryClick
-        )
+
+        AnimatedVisibility(
+            visible = isSearchExpanded,
+            enter = expandVertically(),
+            exit = shrinkVertically()
+        ) {
+            Search(
+                search = search,
+                onSearch = onSearch,
+                onSearchFinished = {
+                    onSearchFinished()
+                    isSearchExpanded = false
+                },
+            )
+        }
+
+        Box(modifier = Modifier.fillMaxSize()) {
+            Column(modifier = Modifier.fillMaxSize()) {
+                BudgetSummary(
+                    budget = budget,
+                    onBudgetSettingsClick = { onBudgetSettingsClick(it.id) }
+                )
+                CategoryList(
+                    budgetId = budget.id,
+                    categoryList = budget.categories,
+                    onAddCategoryPaymentClick = onAddCategoryPaymentClick,
+                    onCategoryClick = onCategoryClick
+                )
+            }
+
+            if (isSearchExpanded) {
+                SearchResults(searchResult = searchResult)
+            }
+        }
     }
 }
 
 @Composable
 private fun Search(
     search: String,
-    searchResult: List<BudgetCategory>,
     onSearch: (String) -> Unit,
     onSearchFinished: () -> Unit
 ) {
-    Column(
+    Row(
+        verticalAlignment = Alignment.CenterVertically,
         modifier = Modifier.fillMaxWidth()
     ) {
-        Row(
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            OutlinedTextField(
-                value = search,
-                onValueChange = onSearch,
-                leadingIcon = {
-                    Icon(
-                        imageVector = Icons.Default.Search,
-                        contentDescription = "Search"
-                    )
-                },
-                modifier = Modifier
-                    .weight(1f)
-                    .padding(8.dp)
-            )
-            IconButton(
-                onClick = onSearchFinished,
-                modifier = Modifier
-            ) {
+        OutlinedTextField(
+            value = search,
+            onValueChange = onSearch,
+            leadingIcon = {
                 Icon(
-                    imageVector = Icons.Default.Close,
-                    contentDescription = "menu"
+                    imageVector = Icons.Default.Search,
+                    contentDescription = "Search"
                 )
-            }
+            },
+            modifier = Modifier
+                .weight(1f)
+                .padding(8.dp)
+        )
+        IconButton(onClick = onSearchFinished) {
+            Icon(
+                imageVector = Icons.Default.Close,
+                contentDescription = "Close search"
+            )
         }
+    }
+}
 
-        LazyColumn(
-            modifier = Modifier.fillMaxWidth()
-        ) {
-            items(searchResult) {
+@Composable
+private fun SearchResults(searchResult: List<BudgetCategory>) {
+    LazyColumn(
+        modifier = Modifier
+            .fillMaxWidth()
+            .background(MaterialTheme.colorScheme.surface)
+    ) {
+        items(searchResult) {
+            Text(
+                text = "Category: ${it.name}",
+                modifier = Modifier.padding(start = 8.dp)
+            )
+            if (it.payments.isNotEmpty()) {
                 Text(
-                    text = "Category: ${it.name}",
-                    modifier = Modifier.padding(start = 8.dp)
+                    text = "Payments:",
+                    modifier = Modifier.padding(start = 12.dp)
                 )
-                if (it.payments.isNotEmpty()) {
+                it.payments.forEach {
                     Text(
-                        text = "Payments:",
-                        modifier = Modifier.padding(start = 12.dp)
+                        text = "${it.amount}, ${it.note}",
+                        modifier = Modifier.padding(start = 16.dp)
                     )
-                    it.payments.forEach {
-                        Text(
-                            text = "${it.amount}, ${it.note}",
-                            modifier = Modifier.padding(start = 16.dp)
-                        )
-                    }
                 }
             }
         }
@@ -249,6 +278,7 @@ private fun CreateBudget(
 private fun Header(
     onMenuClick: () -> Unit,
     onPaymentsClick: () -> Unit,
+    onSearchClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
     Row(
@@ -256,22 +286,25 @@ private fun Header(
         horizontalArrangement = Arrangement.SpaceBetween,
         modifier = modifier.fillMaxWidth()
     ) {
-        IconButton(
-            onClick = onMenuClick,
-        ) {
+        IconButton(onClick = onMenuClick) {
             Icon(
                 imageVector = Icons.Default.Menu,
                 contentDescription = "menu"
             )
         }
-        Spacer(modifier = Modifier.width(0.dp))
-        IconButton(
-            onClick = onPaymentsClick,
-        ) {
-            Icon(
-                imageVector = Icons.Default.List,
-                contentDescription = "All Payments"
-            )
+        Row {
+            IconButton(onClick = onSearchClick) {
+                Icon(
+                    imageVector = Icons.Default.Search,
+                    contentDescription = "Search"
+                )
+            }
+            IconButton(onClick = onPaymentsClick) {
+                Icon(
+                    imageVector = Icons.Default.List,
+                    contentDescription = "All Payments"
+                )
+            }
         }
     }
 }
