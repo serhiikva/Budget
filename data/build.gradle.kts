@@ -23,6 +23,10 @@ android {
             dimension = "environment"
         }
 
+        create("beta") {
+            dimension = "environment"
+        }
+
         create("prod") {
             dimension = "environment"
         }

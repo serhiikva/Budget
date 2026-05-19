@@ -28,6 +28,12 @@ android {
             buildConfigField("String", "FIREBASE_USERS_REF", "\"users_dev\"")
         }
 
+        create("beta") {
+            dimension = "environment"
+            buildConfigField("String", "FIREBASE_BUDGETS_REF", "\"budgets\"")
+            buildConfigField("String", "FIREBASE_USERS_REF", "\"users\"")
+        }
+
         create("prod") {
             dimension = "environment"
             buildConfigField("String", "FIREBASE_BUDGETS_REF", "\"budgets\"")

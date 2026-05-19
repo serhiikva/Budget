@@ -1,4 +1,5 @@
-import org.codehaus.groovy.runtime.ArrayTypeUtils.dimension
+import java.util.Properties
+import java.io.FileInputStream
 
 plugins {
     alias(libs.plugins.android.application)
@@ -14,14 +15,22 @@ android {
         version = release(36)
     }
 
+    val appVersion = "1.1"
+
     defaultConfig {
         applicationId = "com.bungalow.budget"
         minSdk = 27
         targetSdk = 36
         versionCode = 2
-        versionName = "1.1"
+        versionName = appVersion
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+    }
+
+    val keystoreProperties = Properties()
+    val keystorePropertiesFile = rootProject.file("keystore.properties")
+    if (keystorePropertiesFile.exists()) {
+        keystoreProperties.load(FileInputStream(keystorePropertiesFile))
     }
 
     signingConfigs {
@@ -31,6 +40,13 @@ android {
             keyAlias = "budgetalias"
             keyPassword = "budget131pass"
         }
+
+        create("prod") {
+            storeFile = file(keystoreProperties["STORE_FILE"] as String)
+            storePassword = keystoreProperties["STORE_PASSWORD"] as String
+            keyAlias = keystoreProperties["KEY_ALIAS"] as String
+            keyPassword = keystoreProperties["KEY_PASSWORD"] as String
+        }
     }
 
     flavorDimensions += "environment"
@@ -38,6 +54,12 @@ android {
     productFlavors {
         create("dev") {
             dimension = "environment"
+            versionName = "$appVersion-dev"
+        }
+
+        create("beta") {
+            dimension = "environment"
+            versionName = "$appVersion-beta"
         }
 
         create("prod") {
@@ -52,6 +74,7 @@ android {
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"
             )
+            signingConfig = signingConfigs.getByName("prod")
         }
 
         debug {
