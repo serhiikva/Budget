@@ -81,6 +81,7 @@ android {
             firebaseAppDistribution {
                 artifactType = "APK"
                 groups = "testers"
+                releaseNotes = System.getenv("RELEASE_NOTES") ?: "Beta notes"
             }
         }
 

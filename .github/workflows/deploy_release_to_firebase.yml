@@ -92,10 +92,10 @@ jobs:
 
       - name: Upload beta build
         run: |
-          ./gradlew assembleBetaRelease appDistributionUploadBetaRelease \
-            --release-notes "${{ steps.notes.outputs.notes }}"
+          ./gradlew assembleBetaRelease appDistributionUploadBetaRelease
         env:
           VERSION_CODE: ${{ github.run_number }}
+          RELEASE_NOTES: ${{ steps.notes.outputs.notes }}
           GOOGLE_APPLICATION_CREDENTIALS: firebase-service-account.json
 
       - name: Create git tag
