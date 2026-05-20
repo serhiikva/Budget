@@ -29,7 +29,7 @@ jobs:
       - name: Create keystore.properties
         run: |
           cat <<EOF > keystore.properties
-          STORE_FILE=app/prod_keystore
+          STORE_FILE=prod_keystore
           STORE_PASSWORD=${{ secrets.KEYSTORE_PASSWORD }}
           KEY_ALIAS=${{ secrets.KEY_ALIAS }}
           KEY_PASSWORD=${{ secrets.KEY_PASSWORD }}
@@ -60,7 +60,7 @@ jobs:
       - name: Create keystore.properties
         run: |
           cat <<EOF > keystore.properties
-          STORE_FILE=app/prod_keystore
+          STORE_FILE=prod_keystore
           STORE_PASSWORD=${{ secrets.KEYSTORE_PASSWORD }}
           KEY_ALIAS=${{ secrets.KEY_ALIAS }}
           KEY_PASSWORD=${{ secrets.KEY_PASSWORD }}
