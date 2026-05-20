@@ -30,7 +30,7 @@ jobs:
         run: |
           cat <<EOF > keystore.properties
           STORE_FILE=prod_keystore
-          STORE_PASSWORD=${{ secrets.KEYSTORE_PASSWORD }}
+          STORE_PASSWORD=${{ secrets.STORE_PASSWORD }}
           KEY_ALIAS=${{ secrets.KEY_ALIAS }}
           KEY_PASSWORD=${{ secrets.KEY_PASSWORD }}
           EOF
@@ -61,7 +61,7 @@ jobs:
         run: |
           cat <<EOF > keystore.properties
           STORE_FILE=prod_keystore
-          STORE_PASSWORD=${{ secrets.KEYSTORE_PASSWORD }}
+          STORE_PASSWORD=${{ secrets.STORE_PASSWORD }}
           KEY_ALIAS=${{ secrets.KEY_ALIAS }}
           KEY_PASSWORD=${{ secrets.KEY_PASSWORD }}
           EOF
