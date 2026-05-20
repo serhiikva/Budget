@@ -7,4 +7,5 @@ plugins {
     id("com.google.devtools.ksp") version "2.3.5" apply false
     kotlin("android") version "1.9.24" apply false
     alias(libs.plugins.android.library) apply false
+    id("com.google.firebase.appdistribution") version "5.2.1" apply false
 }

@@ -1,3 +1,4 @@
+import com.google.firebase.appdistribution.gradle.firebaseAppDistribution
 import java.util.Properties
 import java.io.FileInputStream
 
@@ -7,6 +8,7 @@ plugins {
     id("com.google.gms.google-services")
     id("com.google.devtools.ksp")
     id("com.google.dagger.hilt.android")
+    id("com.google.firebase.appdistribution")
 }
 
 android {
@@ -75,6 +77,11 @@ android {
                 "proguard-rules.pro"
             )
             signingConfig = signingConfigs.getByName("prod")
+            firebaseAppDistribution {
+                artifactType = "APK"
+                releaseNotes = "Beta build"
+                groups = "testers"
+            }
         }
 
         debug {
