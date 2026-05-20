@@ -1,5 +1,8 @@
 name: Deploy release to Firebase App Distribution
 
+env:
+  VERSION_CODE: ${{ github.run_number }}
+
 on:
   push:
     branches: [ beta ]
@@ -70,10 +73,38 @@ jobs:
         run: |
           echo '${{ secrets.FIREBASE_SERVICE_ACCOUNT }}' > firebase-service-account.json
 
+      - name: Get versionName from Gradle
+        id: version
+        run: |
+          VERSION=$(./gradlew -q printVersionName)
+          echo "version=$VERSION" >> $GITHUB_OUTPUT
+
+      - name: Generate release notes
+        id: notes
+        run: |
+          echo "notes<<EOF" >> $GITHUB_OUTPUT
+          git log -10 --pretty=format:"- %s" >> $GITHUB_OUTPUT
+          echo "" >> $GITHUB_OUTPUT
+          echo "EOF" >> $GITHUB_OUTPUT
+
       - name: Grant gradlew permission
         run: chmod +x gradlew
 
       - name: Upload beta build
-        run: ./gradlew assembleBetaRelease appDistributionUploadBetaRelease
+        run: |
+          ./gradlew assembleBetaRelease appDistributionUploadBetaRelease \
+            --release-notes "${{ steps.notes.outputs.notes }}"
         env:
+          VERSION_CODE: ${{ github.run_number }}
           GOOGLE_APPLICATION_CREDENTIALS: firebase-service-account.json
+
+      - name: Create git tag
+        run: |
+          VERSION=${{ steps.version.outputs.version }}
+          TAG="v$VERSION"
+                
+          git config user.name "github-actions"
+          git config user.email "github-actions@github.com"
+                
+          git tag $TAG
+          git push origin $TAG

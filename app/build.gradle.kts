@@ -17,14 +17,15 @@ android {
         version = release(36)
     }
 
-    val appVersion = "1.1"
+    val appVersionCode = (System.getenv("VERSION_CODE") ?: "1").toInt()
+    val appVersionName = "1.0.$appVersionCode"
 
     defaultConfig {
         applicationId = "com.bungalow.budget"
         minSdk = 27
         targetSdk = 36
-        versionCode = 2
-        versionName = appVersion
+        versionCode = appVersionCode
+        versionName = appVersionName
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
@@ -56,12 +57,12 @@ android {
     productFlavors {
         create("dev") {
             dimension = "environment"
-            versionName = "$appVersion-dev"
+            versionName = "$appVersionName-dev"
         }
 
         create("beta") {
             dimension = "environment"
-            versionName = "$appVersion-beta"
+            versionName = "$appVersionName-beta"
         }
 
         create("prod") {
@@ -79,7 +80,6 @@ android {
             signingConfig = signingConfigs.getByName("prod")
             firebaseAppDistribution {
                 artifactType = "APK"
-                releaseNotes = "Beta build"
                 groups = "testers"
             }
         }
@@ -95,6 +95,12 @@ android {
     buildFeatures {
         compose = true
         buildConfig = true
+    }
+}
+
+tasks.register("printVersionName") {
+    doLast {
+        println(android.defaultConfig.versionName)
     }
 }
 
@@ -125,5 +131,4 @@ dependencies {
     ksp(libs.hilt.android.compiler)
     implementation(libs.androidx.hilt.navigation.compose)
     implementation(libs.timber)
-
 }
