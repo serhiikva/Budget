@@ -1,5 +1,8 @@
 name: Deploy release to Firebase App Distribution
 
+permissions:
+  contents: write
+
 env:
   VERSION_CODE: ${{ github.run_number }}
 
