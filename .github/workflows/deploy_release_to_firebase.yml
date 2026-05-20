@@ -29,10 +29,10 @@ jobs:
       - name: Create keystore.properties
         run: |
           cat <<EOF > keystore.properties
-          storeFile=app/prod_keystore
-          storePassword=${{ secrets.KEYSTORE_PASSWORD }}
-          keyAlias=${{ secrets.KEY_ALIAS }}
-          keyPassword=${{ secrets.KEY_PASSWORD }}
+          STORE_FILE=app/prod_keystore
+          STORE_PASSWORD=${{ secrets.KEYSTORE_PASSWORD }}
+          KEY_ALIAS=${{ secrets.KEY_ALIAS }}
+          KEY_PASSWORD=${{ secrets.KEY_PASSWORD }}
           EOF
 
       - name: Run unit tests
