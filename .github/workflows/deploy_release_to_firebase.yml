@@ -56,6 +56,9 @@ jobs:
           java-version: 17
           cache: 'gradle'
 
+      - name: Grant gradlew permission
+        run: chmod +x gradlew
+
       - name: Restore keystore
         run: |
           echo "${{ secrets.STORE_FILE }}" | base64 -d > app/prod_keystore
@@ -86,9 +89,6 @@ jobs:
           git log -10 --pretty=format:"- %s" >> $GITHUB_OUTPUT
           echo "" >> $GITHUB_OUTPUT
           echo "EOF" >> $GITHUB_OUTPUT
-
-      - name: Grant gradlew permission
-        run: chmod +x gradlew
 
       - name: Upload beta build
         run: |
