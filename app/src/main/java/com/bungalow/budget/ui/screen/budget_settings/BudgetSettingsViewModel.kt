@@ -3,7 +3,8 @@ package com.bungalow.budget.ui.screen.budget_settings
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.bungalow.budget.ui.navigation.ARG_BUDGET_ID
+import androidx.navigation.toRoute
+import com.bungalow.budget.ui.navigation.StartBudget
 import com.investigate.domain.model.Budget
 import com.investigate.domain.model.BudgetCategory
 import com.investigate.domain.usecase.CreateBudgetUseCase
@@ -15,7 +16,6 @@ import com.investigate.domain.usecase.ObserveBudgetByIdUseCase
 import com.investigate.domain.usecase.UpdateBudgetUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -32,7 +32,7 @@ class BudgetSettingsViewModel @Inject constructor(
     savedStateHandle: SavedStateHandle
 ): ViewModel() {
 
-    val budgetId: Int = savedStateHandle[ARG_BUDGET_ID] ?: -1
+    val budgetId: Int = savedStateHandle.toRoute<StartBudget>().budgetId ?: -1
 
     private val _budget = MutableStateFlow(Budget.empty())
     val budget = _budget.asStateFlow()

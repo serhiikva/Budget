@@ -1,36 +1,28 @@
 package com.bungalow.budget.ui.navigation
 
+import kotlinx.serialization.Serializable
 
-const val ROUTE_LOGIN = "login"
-const val ROUTE_HOME = "home"
-const val ROUTE_START_BUDGET = "startBudget"
-const val ROUTE_CATEGORY_DETAILS = "categoryDetails"
-const val ROUTE_HISTORY = "history"
-const val ROUTE_PAYMENTS = "payments"
+sealed interface Route
 
-const val ARG_BUDGET_ID = "budgetId"
-const val ARG_CATEGORY_ID = "categoryId"
+@Serializable
+object Login : Route
 
-sealed class Route(val route: String) {
-    object Login : Route(ROUTE_LOGIN)
+@Serializable
+object Home : Route
 
-    object Home : Route(ROUTE_HOME)
+@Serializable
+data class StartBudget(
+    val budgetId: Int? = null
+) : Route
 
-    object StartBudget : Route("$ROUTE_START_BUDGET/{$ARG_BUDGET_ID}") {
-        fun getRoute(budgetId: Int?): String {
-            return budgetId?.let {
-                "$ROUTE_START_BUDGET/$budgetId"
-            } ?: route
-        }
-    }
+@Serializable
+data class CategoryDetails(
+    val budgetId: Int,
+    val categoryId: String
+) : Route
 
-    object CategoryDetails : Route("$ROUTE_CATEGORY_DETAILS/{$ARG_BUDGET_ID}/{$ARG_CATEGORY_ID}") {
-        fun getRoute(budgetId: Int, categoryId: String): String {
-            return "$ROUTE_CATEGORY_DETAILS/$budgetId/$categoryId"
-        }
-    }
+@Serializable
+object History : Route
 
-    object History : Route(ROUTE_HISTORY)
-
-    object Payments : Route(ROUTE_PAYMENTS)
-}
+@Serializable
+object Payments : Route

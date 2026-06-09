@@ -37,8 +37,8 @@ fun MainNavHost() {
     val navController = rememberNavController()
 
     SharedTransitionLayout {
-        NavHost(navController = navController, startDestination = Route.Login.route) {
-            composable(Route.Login.route) {
+        NavHost(navController = navController, startDestination = Login) {
+            composable<Login> {
                 Box(
                     modifier = Modifier
                         .fillMaxSize()
@@ -46,8 +46,8 @@ fun MainNavHost() {
                 ) {
                     LoginScreen(
                         onLoggedIn = {
-                            navController.navigate(Route.Home.route) {
-                                popUpTo(Route.Login.route) {
+                            navController.navigate(Home) {
+                                popUpTo(Login) {
                                     inclusive = true
                                 }
                             }
@@ -55,7 +55,7 @@ fun MainNavHost() {
                     )
                 }
             }
-            composable(Route.Home.route) {
+            composable<Home> {
                 CompositionLocalProvider(
                     LocalSharedTransitionScope provides this@SharedTransitionLayout,
                     LocalAnimatedVisibilityScope provides this@composable
@@ -67,33 +67,27 @@ fun MainNavHost() {
                     ) {
                         HomeScreen(
                             onStartBudgetClick = {
-                                navController.navigate(Route.StartBudget.getRoute(-1))
+                                navController.navigate(StartBudget(-1))
                             },
                             onBudgetSettingsClick = {
-                                navController.navigate(Route.StartBudget.getRoute(it))
+                                navController.navigate(StartBudget(it))
                             },
                             onCategoryClick = { budgetId, categoryId ->
                                 navController.navigate(
-                                    Route.CategoryDetails.getRoute(
-                                        budgetId,
-                                        categoryId
-                                    )
+                                    CategoryDetails(budgetId, categoryId)
                                 )
                             },
                             onMenuClick = {
-                                navController.navigate(Route.History.route)
+                                navController.navigate(History)
                             },
                             onPaymentsClick = {
-                                navController.navigate(Route.Payments.route)
+                                navController.navigate(Payments)
                             }
                         )
                     }
                 }
             }
-            composable(
-                Route.StartBudget.route,
-                arguments = listOf(navArgument(ARG_BUDGET_ID) { type = NavType.IntType })
-            ) {
+            composable<StartBudget> {
                 Box(
                     modifier = Modifier
                         .fillMaxSize()
@@ -104,13 +98,7 @@ fun MainNavHost() {
                     )
                 }
             }
-            composable(
-                Route.CategoryDetails.route,
-                arguments = listOf(
-                    navArgument(ARG_BUDGET_ID) { type = NavType.IntType },
-                    navArgument(ARG_CATEGORY_ID) { type = NavType.StringType },
-                )
-            ) {
+            composable<CategoryDetails> {
                 CompositionLocalProvider(
                     LocalSharedTransitionScope provides this@SharedTransitionLayout,
                     LocalAnimatedVisibilityScope provides this@composable
@@ -126,9 +114,7 @@ fun MainNavHost() {
                     }
                 }
             }
-            composable(
-                Route.History.route
-            ) {
+            composable<History> {
                 Box(
                     modifier = Modifier
                         .fillMaxSize()
@@ -139,9 +125,7 @@ fun MainNavHost() {
                     )
                 }
             }
-            composable(
-                Route.Payments.route
-            ) {
+            composable<Payments> {
                 Box(
                     modifier = Modifier
                         .fillMaxSize()

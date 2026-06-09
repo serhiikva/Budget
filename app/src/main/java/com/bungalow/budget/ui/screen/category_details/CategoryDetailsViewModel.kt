@@ -3,8 +3,8 @@ package com.bungalow.budget.ui.screen.category_details
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.bungalow.budget.ui.navigation.ARG_BUDGET_ID
-import com.bungalow.budget.ui.navigation.ARG_CATEGORY_ID
+import androidx.navigation.toRoute
+import com.bungalow.budget.ui.navigation.CategoryDetails
 import com.investigate.domain.model.BudgetCategory
 import com.investigate.domain.model.CategoryPayment
 import com.investigate.domain.usecase.DeleteCategoryPaymentUseCase
@@ -23,8 +23,8 @@ class CategoryDetailsViewModel @Inject constructor(
     private val deleteCategoryPaymentUseCase: DeleteCategoryPaymentUseCase,
     savedStateHandle: SavedStateHandle
 ): ViewModel() {
-    private val budgetId: Int = savedStateHandle[ARG_BUDGET_ID] ?: -1
-    private val categoryId: String = savedStateHandle[ARG_CATEGORY_ID] ?: ""
+    private val budgetId: Int = savedStateHandle.toRoute<CategoryDetails>().budgetId
+    private val categoryId: String = savedStateHandle.toRoute<CategoryDetails>().categoryId
 
     private val _category = MutableStateFlow<BudgetCategory?>(null)
     val category = _category.asStateFlow()
